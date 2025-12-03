@@ -1,3 +1,17 @@
-# Fixora – Smart Urban Grievance Redressal System
+Fixora – Smart Urban Grievance Redressal System
 
 Fixora is a centralized, transparent, and real-time grievance redressal system designed to help Urban Local Bodies efficiently address citizen complaints. Built using Flutter for cross-platform accessibility and Firebase for seamless backend operations, Fixora enables users to easily submit issues while allowing authorities to track, manage, and resolve them with complete accountability.
+
+Features
+
+ Easy Complaint Submission – Citizens can report issues with descriptions, photos, and locations.
+
+ Real-Time Updates – Track the status of complaints instantly with Firebase.
+
+ Admin Dashboard – Authorities can manage, prioritize, and resolve grievances efficiently.
+
+ Location-Based Issue Mapping – Visualize complaints on a city-wide map.
+
+ Secure Authentication – Firebase Authentication ensures safe user access.
+
+ Transparent Workflow – Full visibility from complaint submission to resolution.
