@@ -4,14 +4,10 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 
 Features
 
- Easy Complaint Submission – Citizens can report issues with descriptions, photos, and locations.
+Easy Complaint Submission – Citizens can report issues with descriptions, photos, and locations.
 
- Real-Time Updates – Track the status of complaints instantly with Firebase.
+Real-Time Updates – Track the status of complaints instantly with Firebase.
 
- Admin Dashboard – Authorities can manage, prioritize, and resolve grievances efficiently.
+Admin Dashboard – Authorities can manage, prioritize, and resolve grievances efficiently.
 
- Location-Based Issue Mapping – Visualize complaints on a city-wide map.
-
- Secure Authentication – Firebase Authentication ensures safe user access.
-
- Transparent Workflow – Full visibility from complaint submission to resolution.
+Location-Based Issue Mapping – Visualize complaints on a city-wide map.
