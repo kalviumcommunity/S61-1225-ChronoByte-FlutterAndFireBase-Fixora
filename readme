@@ -42,4 +42,48 @@ Our demo app showed a simple screen with text and a button.
 Pressing the button updated the counter (StatefulWidget).
 
 Screenshot -1
- 
+   **Refer to screenshot folder for proof of work(concept-1.png)**
+
+   ### Firebase & Firestore Basics (Concept 2)
+
+**1. Steps Followed for Firebase Setup**
+
+Created a new project in Firebase Console.
+
+Enabled Firestore Database.
+
+Added Firebase to the Flutter app using the setup instructions.
+
+Downloaded the google-services.json (Android) / GoogleService-Info.plist (iOS).
+
+Added required Firebase dependencies in pubspec.yaml.
+
+Initialized Firebase in the app using Firebase.initializeApp().
+
+
+**2.How Firestore’s Real-Time Sync Works**
+
+Firestore sends updates to the app instantly whenever data changes.
+
+The app listens to the database using streams (like StreamBuilder).
+
+No need to refresh—the UI updates automatically when Firestore data changes.
+
+This works because Firestore uses real-time listeners under the hood.
+
+**Demo Logs / Notes Showing Live Updates**
+
+ **Refer to screenshot folder for proof of work(concept-2.png)**
+
+
+**4. Reflection – How Firebase Simplified Backend Management**
+
+No need to build your own server or database.
+
+Firestore handled real-time data, storage, and syncing for us.
+
+Authentication, hosting, and database all came ready to use.
+
+This allowed us to focus more on UI and features instead of backend code.
+
+Firebase helped build a working mobile app much faster and with less complexity.
