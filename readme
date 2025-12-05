@@ -1,3 +1,45 @@
 **Fixora – Smart Urban Grievance Redressal System**
 
 Fixora is a centralized, transparent, and real-time grievance redressal system designed to help Urban Local Bodies efficiently address citizen complaints. Built using Flutter for cross-platform accessibility and Firebase for seamless backend operations, Fixora enables users to easily submit issues while allowing authorities to track, manage, and resolve them with complete accountability.
+## Flutter & Dart Basics (Concept 1)
+
+# 1. StatelessWidget vs StatefulWidget
+
+StatelessWidget:
+
+Does not change once it is built.
+
+Used for static UI like text, icons, simple layouts.
+
+StatefulWidget:
+
+Can change during the app’s lifetime.
+
+Used when the UI updates, like counters, text fields, or API data.
+
+# 2. How Flutter Uses the Widget Tree
+
+Flutter builds everything as a widget tree.
+
+Each widget is a small part of the UI.
+
+When something changes (like a button press), Flutter rebuilds only the affected widgets.
+
+This makes the UI fast and reactive.
+
+# 3. Why Dart Is Ideal for Flutter
+
+Dart compiles fast and gives smooth performance.
+
+Supports hot reload, so changes appear instantly.
+
+Works well for both UI and logic, making development simple.
+
+# 4. Demo App Notes (Android / iOS)
+
+Our demo app showed a simple screen with text and a button.
+
+Pressing the button updated the counter (StatefulWidget).
+
+Screenshot -1
+ 
