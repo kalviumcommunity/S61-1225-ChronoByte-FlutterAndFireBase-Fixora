@@ -92,3 +92,58 @@ Firebase helped build a working mobile app much faster and with less complexity.
 Concept 3 : [Concept-3] Design Thinking for Smart Mobile Interfaces Using Figma & Flutter
 
 Figma link added in README: https://www.figma.com/design/oVfHrUu16qlP7QhvimqI5o/Untitled?node-id=21-2&t=mO2EKGZKPWgBHT9P-1
+
+
+Creating the High-Level Design (HLD) for Fixora
+
+The High-Level Design (HLD) gives an overview of how the Urban Grievance Redressal System is structured. It explains the main parts of the app, how they connect, and how data flows through the system. This helps in understanding the project’s architecture before moving into detailed implementation.
+
+What the HLD Includes
+1. Frontend (Flutter App)
+
+Main screens: Splash, Login, Dashboard, Add Complaint, Complaint Status, Profile.
+
+Simple navigation flow between screens.
+
+Use of state management (like Provider, Riverpod, or Bloc).
+
+Reusable UI components for consistency.
+
+2. Backend (Firebase Services)
+
+Firebase Authentication for secure login (Email/Google).
+
+Cloud Firestore to store user data, complaints, and status updates.
+
+Cloud Storage for uploading photos/videos of issues.
+
+Cloud Functions for sending notifications and automating backend tasks.
+
+3. Data Models
+
+User: id, name, email, role.
+
+Complaint: title, description, category, location, media, status, timestamps.
+
+Updates: timeline of changes for each complaint.
+
+4. Integrations
+
+Google Maps API for selecting and viewing locations.
+
+Firebase Cloud Messaging (FCM) for real-time notifications.
+
+Analytics & Crashlytics for tracking usage and app crashes.
+
+5. CI/CD & Deployment
+
+Automated build and deploy pipelines using GitHub Actions or Codemagic.
+
+Support for multiple environments (dev / staging / production).
+
+The HLD also includes a visual diagram showing how all layers connect.
+
+
+Here is the figma link:
+
+https://www.figma.com/design/oVfHrUu16qlP7QhvimqI5o/Untitled?node-id=19-2&t=tA9gbpPbYfdawzYP-1
