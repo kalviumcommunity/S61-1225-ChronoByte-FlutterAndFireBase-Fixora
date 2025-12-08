@@ -1,6 +1,7 @@
 **Fixora – Smart Urban Grievance Redressal System**
 
 Fixora is a centralized, transparent, and real-time grievance redressal system designed to help Urban Local Bodies efficiently address citizen complaints. Built using Flutter for cross-platform accessibility and Firebase for seamless backend operations, Fixora enables users to easily submit issues while allowing authorities to track, manage, and resolve them with complete accountability.
+
 ## Flutter & Dart Basics (Concept 1)
 
 # 1. StatelessWidget vs StatefulWidget
@@ -42,9 +43,9 @@ Our demo app showed a simple screen with text and a button.
 Pressing the button updated the counter (StatefulWidget).
 
 Screenshot -1
-   **Refer to screenshot folder for proof of work(concept-1.png)**
+**Refer to screenshot folder for proof of work(concept-1.png)**
 
-   ### Firebase & Firestore Basics (Concept 2)
+### Firebase & Firestore Basics (Concept 2)
 
 **1. Steps Followed for Firebase Setup**
 
@@ -60,7 +61,6 @@ Added required Firebase dependencies in pubspec.yaml.
 
 Initialized Firebase in the app using Firebase.initializeApp().
 
-
 **2.How Firestore’s Real-Time Sync Works**
 
 Firestore sends updates to the app instantly whenever data changes.
@@ -73,8 +73,7 @@ This works because Firestore uses real-time listeners under the hood.
 
 **Demo Logs / Notes Showing Live Updates**
 
- **Refer to screenshot folder for proof of work(concept-2.png)**
-
+**Refer to screenshot folder for proof of work(concept-2.png)**
 
 **4. Reflection – How Firebase Simplified Backend Management**
 
@@ -87,3 +86,9 @@ Authentication, hosting, and database all came ready to use.
 This allowed us to focus more on UI and features instead of backend code.
 
 Firebase helped build a working mobile app much faster and with less complexity.
+
+## Figma & Design Thinking (Concept 3)
+
+Concept 3 : [Concept-3] Design Thinking for Smart Mobile Interfaces Using Figma & Flutter
+
+Figma link added in README: https://www.figma.com/design/oVfHrUu16qlP7QhvimqI5o/Untitled?node-id=21-2&t=mO2EKGZKPWgBHT9P-1
