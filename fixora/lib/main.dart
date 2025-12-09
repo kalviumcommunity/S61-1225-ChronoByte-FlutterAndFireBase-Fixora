@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'login_register_page.dart';
-import 'user_dashboard.dart';
+import 'auth/login_page.dart';
+import 'auth/signup_page.dart';
+import 'widgets/user_dashboard.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -20,7 +24,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/login': (context) => const LoginRegisterPage(),
+        '/signup': (context) => const SignupPage(),
+        '/login': (context) => const LoginPage(),
         '/dashboard': (context) {
           final args =
               ModalRoute.of(context)?.settings.arguments
