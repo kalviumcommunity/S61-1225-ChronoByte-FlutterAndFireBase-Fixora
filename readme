@@ -87,18 +87,74 @@ This allowed us to focus more on UI and features instead of backend code.
 
 Firebase helped build a working mobile app much faster and with less complexity.
 
+## Authentication & User Dashboard (Concept 2.5)
+
+**Overview: Login, Register & Dashboard Implementation**
+
+We have created a complete authentication flow with responsive UI for mobile, tablet, and desktop devices.
+
+**1. Login & Register Pages**
+
+Created `login_register_page.dart` with the following features:
+
+- **Dual Form UI**: Single component handles both login and registration modes
+- **Form Validation**: Email and password validation with error messages
+- **Responsive Design**: Adaptive UI that adjusts padding, font sizes, and button heights based on screen size
+- **Form Switching**: Easy toggle between login and register modes using the "Don't have an account?" / "Already have an account?" buttons
+- **Flutter StatefulWidget**: Uses form validation with GlobalKey to ensure user inputs are valid before submission
+
+**Key Features:**
+
+- Input validation for email, password, and username (registration only)
+- Responsive card design with elevation effects
+- Centered layout using SingleChildScrollView and ConstrainedBox
+- TextFormField for email (with keyboard type), password (obscured), and username
+- ElevatedButton with dynamic sizing
+
+**Screenshots:**
+
+- Login Screen: `screenshot/login_screen.png`
+- Register Screen: `screenshot/register_screen.png`
+- Home Screen: `screenshot/home_screen.png`
+
+**2. User Dashboard**
+
+Created `user_dashboard.dart` with the following features:
+
+- **Welcome Message**: Personalized greeting with user icon
+- **Account Information Display**: Shows logged-in user's email and username
+- **Logout Functionality**: Profile menu button in AppBar with logout confirmation dialog
+- **Responsive Layout**: Matches login page design for consistency
+- **Navigation Integration**: Receives user data via route arguments
+
+**Key Features:**
+
+- Displays user email and username from login/register form
+- PopupMenuButton for user profile actions
+- Confirmation dialog before logout
+- Clears navigation history on logout (user cannot go back to dashboard)
+- Professional card-based UI with proper spacing
+- Fully responsive for all screen sizes
+
+**Navigation Flow:**
+
+1. Home Page → "Login / Register" button
+2. Login/Register Page → Enter credentials → "Login" or "Register" button
+3. User Dashboard → Shows welcome message + user info
+4. Logout → Returns to Home Page
+
 ## Figma & Design Thinking (Concept 3)
 
 Concept 3 : [Concept-3] Design Thinking for Smart Mobile Interfaces Using Figma & Flutter
 
 Figma link added in README: https://www.figma.com/design/oVfHrUu16qlP7QhvimqI5o/Untitled?node-id=21-2&t=mO2EKGZKPWgBHT9P-1
 
-
 Creating the High-Level Design (HLD) for Fixora
 
 The High-Level Design (HLD) gives an overview of how the Urban Grievance Redressal System is structured. It explains the main parts of the app, how they connect, and how data flows through the system. This helps in understanding the project’s architecture before moving into detailed implementation.
 
 What the HLD Includes
+
 1. Frontend (Flutter App)
 
 Main screens: Splash, Login, Dashboard, Add Complaint, Complaint Status, Profile.
@@ -142,7 +198,6 @@ Automated build and deploy pipelines using GitHub Actions or Codemagic.
 Support for multiple environments (dev / staging / production).
 
 The HLD also includes a visual diagram showing how all layers connect.
-
 
 Here is the figma link:
 
