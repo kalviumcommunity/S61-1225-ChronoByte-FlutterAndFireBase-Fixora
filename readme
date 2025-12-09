@@ -2,6 +2,61 @@
 
 Fixora is a centralized, transparent, and real-time grievance redressal system designed to help Urban Local Bodies efficiently address citizen complaints. Built using Flutter for cross-platform accessibility and Firebase for seamless backend operations, Fixora enables users to easily submit issues while allowing authorities to track, manage, and resolve them with complete accountability.
 
+## Folder Structure
+
+lib/
+│
+├── main.dart
+│
+├── screens/
+│   │
+│   ├── auth/
+│   │   ├── login_page.dart
+│   │   └── register_page.dart
+│   │
+│   ├── user/
+│   │   ├── user_dashboard.dart
+│   │   ├── submit_complaint_page.dart
+│   │   ├── tracking_complaint_page.dart
+│   │   ├── complaint_categories_page.dart
+│   │   └── user_profile_page.dart
+│   │
+│   ├── admin/
+│   │   └── admin_dashboard_page.dart
+│   │
+│   ├── common/
+│   │   └── home_page.dart
+│   │
+│   └── splash/
+│       └── splash_screen.dart
+│
+├── widgets/
+│   ├── custom_button.dart
+│   ├── custom_textfield.dart
+│   ├── complaint_card.dart
+│   └── dashboard_tile.dart
+│
+├── models/
+│   ├── user_model.dart
+│   └── complaint_model.dart
+│
+├── services/
+│   ├── auth_service.dart
+│   ├── complaint_service.dart
+│   ├── admin_service.dart
+│   └── firestore_service.dart
+│
+├── utils/
+│   ├── app_colors.dart
+│   ├── app_styles.dart
+│   ├── app_routes.dart
+│   └── constants.dart
+│
+└── providers/
+    ├── user_provider.dart
+    └── complaint_provider.dart
+
+
 ## Flutter & Dart Basics (Concept 1)
 
 # 1. StatelessWidget vs StatefulWidget
