@@ -1,99 +1,102 @@
 import 'package:flutter/material.dart';
+import 'login_register_page.dart';
+import 'user_dashboard.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Fixora Welcome',
+      title: 'Fixora',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),
-      home: const MyHomePage(title: 'Welcome to Fixora'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/login': (context) => const LoginRegisterPage(),
+        '/dashboard': (context) {
+          final args =
+              ModalRoute.of(context)?.settings.arguments
+                  as Map<String, dynamic>?;
+          return UserDashboard(
+            email: args?['email'] ?? '',
+            username: args?['username'],
+          );
+        },
+      },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  bool _isWarmWelcome = true;
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenWidth < 600;
+    final isMediumScreen = screenWidth >= 600 && screenWidth < 1200;
+
+    // Responsive padding
+    final horizontalPadding = isSmallScreen
+        ? 24.0
+        : (isMediumScreen ? 48.0 : 64.0);
+    final verticalPadding = isSmallScreen ? 24.0 : 32.0;
+
+    // Responsive button width
+    final maxButtonWidth = isSmallScreen
+        ? double.infinity
+        : (isMediumScreen ? 400.0 : 500.0);
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: const Text('Welcome to Fixora'), centerTitle: true),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              _isWarmWelcome ? 'Welcome to Fixora!' : 'Glad you are here.',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 600,
+              minHeight: screenHeight * 0.5,
             ),
-            const SizedBox(height: 24),
-            Icon(
-              _isWarmWelcome ? Icons.handshake_rounded : Icons.auto_fix_high,
-              size: 96,
-              color: _isWarmWelcome
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.secondary,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              _isWarmWelcome
-                  ? 'Urban fixes made simple.'
-                  : 'Let’s resolve your grievances together.',
-              style: Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: () {
-                setState(() {
-                  _isWarmWelcome = !_isWarmWelcome;
-                });
-              },
-              icon: const Icon(Icons.play_arrow_rounded),
-              label: Text(_isWarmWelcome ? 'Get Started' : 'Show Welcome'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Welcome to Fixora!',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: isSmallScreen ? 24 : 28,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
+                SizedBox(height: screenHeight * 0.04),
+                SizedBox(
+                  width: maxButtonWidth,
+                  height: isSmallScreen ? 48 : 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: Text(
+                      'Login / Register',
+                      style: TextStyle(fontSize: isSmallScreen ? 16 : 18),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
