@@ -147,6 +147,51 @@ lib/
     ├── user_provider.dart
     └── complaint_provider.dart
 
+## Exploring Flutter Project Folder Structure and Understanding File Roles
+
+## Project Title
+
+Flutter Project Folder Structure Overview
+
+A simple project setup showcasing how the Flutter folder structure works and why understanding it helps in app development.
+
+---
+
+## Project Structure Summary
+
+For a detailed explanation, check **PROJECT_STRUCTURE.md**.
+
+```
+lib/
+├── main.dart
+├── screens/
+├── widgets/
+└── services/
+```
+
+This is the main working directory where all Dart code lives.
+
+---
+
+## Folder View (IDE Screenshot Placeholder)
+
+> Add your folder screenshot here.
+
+---
+
+## Reflection
+
+### Why understand folder roles?
+
+* Helps navigate the project faster.
+* Makes it easier to debug and add new features.
+
+### How does clean structure help teams?
+
+* Every member knows where files belong.
+* Reduces confusion and merge conflicts.
+* Improves scalability and maintainability.
+
 
 ## Flutter & Dart Basics (Concept 1)
 
