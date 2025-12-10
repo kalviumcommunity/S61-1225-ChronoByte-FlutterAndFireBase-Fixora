@@ -2,6 +2,97 @@
 
 Fixora is a centralized, transparent, and real-time grievance redressal system designed to help Urban Local Bodies efficiently address citizen complaints. Built using Flutter for cross-platform accessibility and Firebase for seamless backend operations, Fixora enables users to easily submit issues while allowing authorities to track, manage, and resolve them with complete accountability.
 
+---
+
+## Setting Up Flutter SDK, Android Studio, and First Emulator Run
+
+Welcome to your first setup deliverable of Sprint #2! In this foundational task, you'll install and configure the Flutter SDK, set up Android Studio (or VS Code) for development, and run your first Flutter app on an emulator or physical device. This step establishes your complete development environment for all upcoming Flutter and Firebase integrations in this sprint.
+
+**Note:** These are general setup guidelines. You may complete the setup on Windows, macOS, or Linux, depending on your system preferences and requirements.
+
+### Task Overview
+
+**1. Install Flutter SDK**
+
+- Visit the official Flutter installation page for your operating system.
+- Download and extract the Flutter SDK to a preferred directory (e.g., `C:\src\flutter` or `/Users/yourname/development/flutter`).
+- Add Flutter to your systems PATH environment variable.
+
+**Windows:**
+- Search for "Environment Variables" → Edit PATH → Add `flutter\bin`.
+
+**macOS/Linux:**
+- Open terminal and edit your shell profile (e.g., `.zshrc` or `.bashrc`):
+    bash
+  export PATH="$PATH:`pwd`/flutter/bin"
+
+- Verify installation by running:
+  ```bash
+  flutter doctor
+  ```
+  This command checks your setup and lists missing dependencies.
+
+**2. Set Up Android Studio (or VS Code)**
+
+- Install Android Studio from the official website.
+- During installation, ensure the following components are checked:
+  - Android SDK
+  - Android SDK Platform
+  - Android Virtual Device (AVD) Manager
+- Open Android Studio → Plugins → search for and install Flutter and Dart plugins.
+
+**Alternatively, if using VS Code:**
+- Install Flutter and Dart extensions from the Marketplace.
+
+**3. Configure Your Emulator**
+
+In Android Studio:
+- Open AVD Manager → Create Virtual Device.
+- Choose a device (e.g., Pixel 6) and a system image (Android 13 or above).
+- Click Finish and launch the emulator.
+
+Verify that your emulator is detected by running:
+
+```
+bash
+flutter devices
+```
+The emulator should appear in the device list.
+
+**4. Create and Run Your First Flutter App**
+
+- Create a new Flutter project:
+
+  ```bash
+  flutter create first_flutter_app
+  ```
+- Navigate to the project folder and open it in Android Studio or VS Code.
+- Run the app on your emulator or connected physical device:
+
+  ```bash
+  flutter run
+  ```
+- You should see the default Flutter counter app appear on your emulator screen.
+
+**5. Setup Verification**
+
+We have successfully completed the Flutter environment setup with the following evidence:
+
+- **Flutter Doctor Output**: All required dependencies are installed and configured correctly
+- **Emulator Running**: The Android emulator is successfully running the first Flutter app
+
+**Screenshots:**
+- Flutter Devices Detection: `screenshot/result_of_flutter_device.png`
+- Android Emulator Running: `screenshot/android_emulator.png`
+
+**Setup Completion Notes:**
+- Flutter SDK has been successfully installed and added to PATH
+- Android Studio configured with Flutter and Dart plugins
+- Android Virtual Device (AVD) created and tested
+- First Flutter app successfully runs on the emulator
+- Development environment is ready for upcoming Flutter and Firebase integrations
+
+
 ## Folder Structure
 
 lib/
