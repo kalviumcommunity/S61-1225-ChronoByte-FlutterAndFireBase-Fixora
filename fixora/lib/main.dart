@@ -4,6 +4,7 @@ import 'auth/signup_page.dart';
 import 'widgets/user_dashboard.dart';
 import 'pages/landing_page/landing.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'pages/user_dashboard/dashboard.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         // '/': (context) => const HomePage(),
-        '/': (context) => const LandingPage(),
+        // '/': (context) => const LandingPage(),
+        '/': (context) => const DashboardScreen(),
         '/signup': (context) => const SignupPage(),
         '/login': (context) => const LoginPage(),
         '/dashboard': (context) {
