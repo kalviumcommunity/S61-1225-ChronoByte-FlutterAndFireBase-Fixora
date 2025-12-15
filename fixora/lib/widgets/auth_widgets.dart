@@ -6,6 +6,36 @@ class AuthColors {
   static const Color fieldColor = Color(0xFF16243a);
   static const Color accentStart = Color(0xFF1e9dfd);
   static const Color accentEnd = Color(0xFF1ab0ff);
+
+  // Light theme colors
+  static const Color lightPanelColor = Colors.white;
+  static const Color lightFieldColor = Color(0xFFF5F7FA);
+  static const Color lightTextColor = Color(0xFF1a1a1a);
+  static const Color lightTextSecondary = Color(0xFF666666);
+
+  static Color getPanelColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? panelColor
+        : lightPanelColor;
+  }
+
+  static Color getFieldColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? fieldColor
+        : lightFieldColor;
+  }
+
+  static Color getTextColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : lightTextColor;
+  }
+
+  static Color getTextSecondaryColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? Colors.white70
+        : lightTextSecondary;
+  }
 }
 
 /// Returns a styled InputDecoration for auth form fields
@@ -13,17 +43,28 @@ InputDecoration authInputDecoration({
   required String label,
   required IconData icon,
   Widget? suffix,
+  required BuildContext context,
 }) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
   return InputDecoration(
     labelText: label,
-    labelStyle: const TextStyle(color: Colors.white70),
-    prefixIcon: Icon(icon, color: Colors.white70),
+    labelStyle: TextStyle(
+      color: isDark ? Colors.white70 : AuthColors.lightTextSecondary,
+    ),
+    prefixIcon: Icon(
+      icon,
+      color: isDark ? Colors.white70 : AuthColors.lightTextSecondary,
+    ),
     suffixIcon: suffix,
     filled: true,
-    fillColor: AuthColors.fieldColor,
+    fillColor: AuthColors.getFieldColor(context),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(color: Colors.white.withOpacity(0.08)),
+      borderSide: BorderSide(
+        color: isDark
+            ? Colors.white.withOpacity(0.08)
+            : Colors.black.withOpacity(0.1),
+      ),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
@@ -122,10 +163,10 @@ class AuthHeader extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            const Text(
+            Text(
               'FlutterAuth',
               style: TextStyle(
-                color: Colors.white,
+                color: AuthColors.getTextColor(context),
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
               ),
@@ -135,8 +176,8 @@ class AuthHeader extends StatelessWidget {
         const SizedBox(height: 30),
         Text(
           title,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: AuthColors.getTextColor(context),
             fontSize: 28,
             fontWeight: FontWeight.w800,
           ),
@@ -145,7 +186,10 @@ class AuthHeader extends StatelessWidget {
         Text(
           subtitle,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white70, fontSize: 15),
+          style: TextStyle(
+            color: AuthColors.getTextSecondaryColor(context),
+            fontSize: 15,
+          ),
         ),
       ],
     );
@@ -160,17 +204,32 @@ class AuthScreenContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF5F7FA),
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0c1626), Color(0xFF0c1b2f), Color(0xFF0f1f36)],
-          ),
+        decoration: BoxDecoration(
+          gradient: isDark
+              ? const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0c1626),
+                    Color(0xFF0c1b2f),
+                    Color(0xFF0f1f36),
+                  ],
+                )
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFFF5F7FA),
+                    const Color(0xFFE8EEF5),
+                    Colors.blue.shade50,
+                  ],
+                ),
         ),
         child: Center(
           child: SingleChildScrollView(
@@ -194,17 +253,22 @@ class AuthCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final cardWidth = size.width > 520 ? maxWidth : size.width * 0.9;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: cardWidth),
       child: Container(
         padding: const EdgeInsets.fromLTRB(22, 28, 22, 26),
         decoration: BoxDecoration(
-          color: AuthColors.panelColor.withOpacity(0.9),
+          color: isDark
+              ? AuthColors.panelColor.withOpacity(0.9)
+              : Colors.white.withOpacity(0.95),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.35),
+              color: isDark
+                  ? Colors.black.withOpacity(0.35)
+                  : Colors.black.withOpacity(0.08),
               blurRadius: 24,
               offset: const Offset(0, 14),
             ),

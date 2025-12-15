@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'auth/login_page.dart';
 import 'auth/signup_page.dart';
 import 'widgets/user_dashboard.dart';
@@ -7,11 +8,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'pages/user_dashboard/dashboard.dart';
 import 'pages/admin_dashboard/admin_dashboard.dart';
 import 'pages/profile_Info/profile.dart';
+import 'theme/theme_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -19,30 +26,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fixora',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-      ),
-      initialRoute: '/',
-      routes: {
-        // '/': (context) => const HomePage(),
-        '/': (context) => const LandingPage(),
-        // '/': (context) => const DashboardScreen(),
-        // '/': (context) => const AdminDashboardPage(),
-        // '/': (context) => const ProfilePage(),
-        '/signup': (context) => const SignupPage(),
-        '/login': (context) => const LoginPage(),
-        '/dashboard': (context) {
-          final args =
-              ModalRoute.of(context)?.settings.arguments
-                  as Map<String, dynamic>?;
-          return UserDashboard(
-            email: args?['email'] ?? '',
-            username: args?['username'],
-          );
-        },
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'Fixora',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.themeMode,
+          initialRoute: '/',
+          routes: {
+            // '/': (context) => const HomePage(),
+            '/': (context) => const LandingPage(),
+            // '/': (context) => const DashboardScreen(),
+            // '/': (context) => const AdminDashboardPage(),
+            // '/': (context) => const ProfilePage(),
+            '/signup': (context) => const SignupPage(),
+            '/login': (context) => const LoginPage(),
+            '/dashboard': (context) {
+              final args =
+                  ModalRoute.of(context)?.settings.arguments
+                      as Map<String, dynamic>?;
+              return UserDashboard(
+                email: args?['email'] ?? '',
+                username: args?['username'],
+              );
+            },
+          },
+        );
       },
     );
   }
