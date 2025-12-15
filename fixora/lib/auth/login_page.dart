@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'auth_service.dart';
+import '../widgets/auth_widgets.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailCtl = TextEditingController();
   final _passCtl = TextEditingController();
   bool _loading = false;
+  bool _obscurePass = true;
 
   @override
   void dispose() {
@@ -24,12 +26,17 @@ class _LoginPageState extends State<LoginPage> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
-      await AuthService.instance.signIn(email: _emailCtl.text.trim(), password: _passCtl.text);
+      await AuthService.instance.signIn(
+        email: _emailCtl.text.trim(),
+        password: _passCtl.text,
+      );
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/dashboard');
     } on Exception catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -37,38 +44,111 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _emailCtl,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (v) => (v == null || v.isEmpty) ? 'Enter email' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _passCtl,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (v) => (v == null || v.length < 6) ? '6+ chars' : null,
-              ),
-              const SizedBox(height: 20),
-              _loading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(onPressed: _submit, child: const Text('Login')),
-              TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/signup'),
-                child: const Text('Don\'t have an account? Sign up'),
-              ),
-            ],
+    return AuthScreenContainer(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const AuthHeader(
+            title: 'Welcome Back',
+            subtitle: 'Enter your credentials to access your account',
           ),
-        ),
+          const SizedBox(height: 32),
+          AuthCard(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextFormField(
+                    controller: _emailCtl,
+                    decoration: authInputDecoration(
+                      label: 'Email Address',
+                      icon: Icons.mail_outline_rounded,
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (v) =>
+                        (v == null || v.isEmpty) ? 'Enter email' : null,
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _passCtl,
+                    decoration: authInputDecoration(
+                      label: 'Password',
+                      icon: Icons.lock_outline_rounded,
+                      suffix: IconButton(
+                        onPressed: () =>
+                            setState(() => _obscurePass = !_obscurePass),
+                        icon: Icon(
+                          _obscurePass
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    obscureText: _obscurePass,
+                    validator: (v) =>
+                        (v == null || v.length < 6) ? '6+ chars' : null,
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.lightBlueAccent,
+                      ),
+                      child: const Text('Forgot password?'),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : AuthGradientButton(
+                          label: 'Sign In',
+                          onPressed: _submit,
+                        ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(height: 1, color: Colors.white12),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          'or',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(height: 1, color: Colors.white12),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Center(
+                    child: TextButton(
+                      onPressed: () => Navigator.pushNamed(context, '/signup'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.lightBlueAccent,
+                      ),
+                      child: const Text('Don\'t have an account? Sign Up'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'By continuing, you agree to our Terms of Service and Privacy Policy',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white60, fontSize: 12),
+          ),
+        ],
       ),
     );
   }
