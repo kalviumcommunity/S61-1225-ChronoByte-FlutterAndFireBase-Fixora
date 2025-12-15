@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'auth_service.dart';
 import '../widgets/auth_widgets.dart';
+import '../widgets/theme_toggle_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -48,6 +49,14 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          const Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: EdgeInsets.only(right: 16, top: 8),
+              child: ThemeToggleButton(),
+            ),
+          ),
+          const SizedBox(height: 20),
           const AuthHeader(
             title: 'Welcome Back',
             subtitle: 'Enter your credentials to access your account',
@@ -64,8 +73,9 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: authInputDecoration(
                       label: 'Email Address',
                       icon: Icons.mail_outline_rounded,
+                      context: context,
                     ),
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: AuthColors.getTextColor(context)),
                     keyboardType: TextInputType.emailAddress,
                     validator: (v) =>
                         (v == null || v.isEmpty) ? 'Enter email' : null,
@@ -76,6 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: authInputDecoration(
                       label: 'Password',
                       icon: Icons.lock_outline_rounded,
+                      context: context,
                       suffix: IconButton(
                         onPressed: () =>
                             setState(() => _obscurePass = !_obscurePass),
@@ -83,11 +94,11 @@ class _LoginPageState extends State<LoginPage> {
                           _obscurePass
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: Colors.white70,
+                          color: AuthColors.getTextSecondaryColor(context),
                         ),
                       ),
                     ),
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: AuthColors.getTextColor(context)),
                     obscureText: _obscurePass,
                     validator: (v) =>
                         (v == null || v.length < 6) ? '6+ chars' : null,
