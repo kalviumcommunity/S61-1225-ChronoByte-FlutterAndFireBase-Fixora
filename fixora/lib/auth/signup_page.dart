@@ -32,7 +32,7 @@ class _SignupPageState extends State<SignupPage> {
         password: _passCtl.text,
       );
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      Navigator.pushReplacementNamed(context, '/report');
     } on Exception catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(

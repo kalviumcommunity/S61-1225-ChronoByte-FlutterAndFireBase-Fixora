@@ -5,14 +5,15 @@ import 'auth/signup_page.dart';
 import 'widgets/user_dashboard.dart';
 import 'pages/landing_page/landing.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'pages/raise_issue/raise_issue_page.dart';
 import 'pages/user_dashboard/dashboard.dart';
 import 'pages/admin_dashboard/admin_dashboard.dart';
 import 'pages/profile_Info/profile.dart';
 import 'theme/theme_provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeProvider(),
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
             // '/': (context) => const ProfilePage(),
             '/signup': (context) => const SignupPage(),
             '/login': (context) => const LoginPage(),
+            '/report': (context) => const RaiseIssuePage(),
             '/dashboard': (context) {
               final args =
                   ModalRoute.of(context)?.settings.arguments
