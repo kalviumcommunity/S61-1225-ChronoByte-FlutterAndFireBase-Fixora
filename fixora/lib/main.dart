@@ -10,6 +10,8 @@ import 'pages/user_dashboard/dashboard.dart';
 import 'pages/admin_dashboard/admin_dashboard.dart';
 import 'pages/profile_Info/profile.dart';
 import 'theme/theme_provider.dart';
+import 'pages/track_complaint/track_complaint_page.dart';
+// import 'pages/track_complaint_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,12 +41,14 @@ class MyApp extends StatelessWidget {
           routes: {
             // '/': (context) => const HomePage(),
             '/': (context) => const LandingPage(),
+            // '/': (context) => const TrackComplaintPage(),
             // '/': (context) => const DashboardScreen(),
             // '/': (context) => const AdminDashboardPage(),
             // '/': (context) => const ProfilePage(),
             '/signup': (context) => const SignupPage(),
             '/login': (context) => const LoginPage(),
             '/report': (context) => const RaiseIssuePage(),
+            '/track': (context) => const TrackComplaintPage(),
             '/dashboard': (context) {
               final args =
                   ModalRoute.of(context)?.settings.arguments

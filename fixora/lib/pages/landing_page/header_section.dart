@@ -23,10 +23,13 @@ class HeaderSection extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Text("Logo",
-                    style: TextStyle(
-                        color: Colors.blue.shade700,
-                        fontWeight: FontWeight.bold)),
+                child: Text(
+                  "Logo",
+                  style: TextStyle(
+                    color: Colors.blue.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const Icon(Icons.menu, color: Colors.white, size: 28),
             ],
@@ -36,7 +39,10 @@ class HeaderSection extends StatelessWidget {
           const Text(
             "Your Voice Matters.\nWe Listen.",
             style: TextStyle(
-                color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
           ),
 
           const SizedBox(height: 12),
@@ -55,14 +61,13 @@ class HeaderSection extends StatelessWidget {
                 backgroundColor: Colors.orange,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
               },
               child: const Text(
@@ -82,11 +87,16 @@ class HeaderSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 side: const BorderSide(color: Colors.white),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              onPressed: () {},
-              child: const Text("Track Status",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              onPressed: () {
+                Navigator.pushNamed(context, '/track');
+              },
+              child: const Text(
+                "Track Status",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ),
           ),
         ],
