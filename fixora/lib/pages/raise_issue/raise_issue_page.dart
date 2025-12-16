@@ -137,17 +137,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       ),
       title: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: _primaryBlue,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Text(
-              'Fix',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-          ),
+          _brandLogo(size: 28),
           const SizedBox(width: 12),
           const Text(
             'Fixora - Raise Issue',
@@ -247,9 +237,9 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(color: _lightBlue, borderRadius: BorderRadius.circular(16)),
-            child: Icon(Icons.description_outlined, size: isSmall ? 32 : 40, color: _primaryBlue),
+            child: _brandLogo(size: isSmall ? 36 : 48),
           ),
           SizedBox(height: isSmall ? 16 : 20),
           Text(
@@ -267,6 +257,32 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             style: TextStyle(fontSize: isSmall ? 14 : 15, color: const Color(0xFF64748B), height: 1.5),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _brandLogo({double size = 36, bool circular = true}) {
+    final double padding = size > 36 ? 10 : 8;
+    return Container(
+      height: size + padding,
+      width: size + padding,
+      padding: EdgeInsets.all(padding / 2),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: circular ? BoxShape.circle : BoxShape.rectangle,
+        borderRadius: circular ? null : BorderRadius.circular(10),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: Offset(0, 3))],
+        border: Border.all(color: Colors.black.withOpacity(0.04)),
+      ),
+      child: ClipRRect(
+        borderRadius: circular ? BorderRadius.circular(999) : BorderRadius.circular(8),
+        child: Image.asset(
+          'assets/images/logo.png',
+          height: size,
+          width: size,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stack) => Icon(Icons.image_not_supported_outlined, color: _primaryBlue, size: size),
+        ),
       ),
     );
   }
@@ -443,11 +459,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: _primaryBlue, borderRadius: BorderRadius.circular(8)),
-                child: const Text('Fix', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-              ),
+              _brandLogo(size: 28),
               const SizedBox(width: 8),
               const Text('Fixora', style: TextStyle(color: Color(0xFF1E293B), fontWeight: FontWeight.w600, fontSize: 16)),
             ],
