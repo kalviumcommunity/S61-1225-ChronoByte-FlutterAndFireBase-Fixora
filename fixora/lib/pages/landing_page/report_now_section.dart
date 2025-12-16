@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../auth/login_page.dart';
 
-
 class ReportNowSection extends StatelessWidget {
   const ReportNowSection({super.key});
 
@@ -22,7 +21,10 @@ class ReportNowSection extends StatelessWidget {
           const Text(
             "Have a Civic Issue?\nReport It Now!",
             style: TextStyle(
-                color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
 
           const SizedBox(height: 10),
@@ -40,18 +42,19 @@ class ReportNowSection extends StatelessWidget {
                 backgroundColor: Colors.orange,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
               },
-              child: const Text("Submit Complaint",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: const Text(
+                "Submit Complaint",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ),
           ),
 
@@ -63,11 +66,16 @@ class ReportNowSection extends StatelessWidget {
                 side: const BorderSide(color: Colors.white),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              onPressed: () {},
-              child: const Text("Check Existing Status",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              onPressed: () {
+                Navigator.pushNamed(context, '/track');
+              },
+              child: const Text(
+                "Check Existing Status",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ),
           ),
         ],
