@@ -85,6 +85,10 @@ We have successfully completed the Flutter environment setup with the following 
 - Flutter Devices Detection: `screenshot/result_of_flutter_device.png`
 - Android Emulator Running: `screenshot/android_emulator.png`
 
+**Setup Images (2025-12-17):**
+![Setup image 1](screenshot/Screenshot%202025-12-17%20153633.png)
+![Setup image 2](screenshot/Screenshot%202025-12-17%20153645.png)
+
 **Setup Completion Notes:**
 - Flutter SDK has been successfully installed and added to PATH
 - Android Studio configured with Flutter and Dart plugins
@@ -431,3 +435,42 @@ The HLD also includes a visual diagram showing how all layers connect.
 Here is the figma link:
 
 https://www.figma.com/design/oVfHrUu16qlP7QhvimqI5o/Untitled?node-id=19-2&t=tA9gbpPbYfdawzYP-1
+
+# Firebase SDK Integration (FlutterFire CLI)
+
+## Overview
+
+Firebase SDKs were integrated into a Flutter app using **FlutterFire CLI** for fast and error-free multi-platform setup.
+
+## Steps
+
+```bash
+npm install -g firebase-tools
+dart pub global activate flutterfire_cli
+firebase login
+flutterfire configure
+```
+
+Generated `firebase_options.dart` automatically.
+
+## Firebase Initialization
+
+```dart
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
+```
+
+## Verification
+
+* App runs successfully
+* Firebase Console shows registered app
+* Log confirms Firebase initialization
+
+## Reflection
+
+FlutterFire CLI simplified setup, avoided manual configuration, and ensured platform consistency.
+
+
+Setup completed successfully
+
