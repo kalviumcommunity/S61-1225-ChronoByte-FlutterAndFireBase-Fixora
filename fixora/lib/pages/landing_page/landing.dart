@@ -4,6 +4,7 @@ import 'features_section.dart';
 import 'steps_section.dart';
 import 'report_now_section.dart';
 import 'footer_section.dart';
+import '../../widgets/animated_section.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -15,16 +16,20 @@ class LandingPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            HeaderSection(),
-            SizedBox(height: 20),
-            FeaturesSection(),
-            SizedBox(height: 20),
-            StepsSection(),
-            SizedBox(height: 20),
-            ReportNowSection(),
-            SizedBox(height: 20),
-            FooterSection(),
+          children: [
+            AnimatedSection(delay: const Duration(milliseconds: 0), child: HeaderSection()),
+            const SizedBox(height: 20),
+
+            AnimatedSection(delay: const Duration(milliseconds: 100), child: FeaturesSection()),
+            const SizedBox(height: 20),
+
+            AnimatedSection(delay: const Duration(milliseconds: 200), child: StepsSection()),
+            const SizedBox(height: 20),
+
+            AnimatedSection(delay: const Duration(milliseconds: 300), child: ReportNowSection()),
+            const SizedBox(height: 20),
+
+            AnimatedSection(delay: const Duration(milliseconds: 400), child: FooterSection()),
           ],
         ),
       ),
