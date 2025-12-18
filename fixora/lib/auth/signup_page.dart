@@ -11,6 +11,7 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameCtl = TextEditingController();
   final _emailCtl = TextEditingController();
   final _passCtl = TextEditingController();
   bool _loading = false;
@@ -18,6 +19,7 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   void dispose() {
+    _usernameCtl.dispose();
     _emailCtl.dispose();
     _passCtl.dispose();
     super.dispose();
@@ -27,9 +29,23 @@ class _SignupPageState extends State<SignupPage> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
+      // Check if username already exists
+      final usernameExists = await AuthService.instance.isUsernameExists(
+        _usernameCtl.text.trim(),
+      );
+      if (usernameExists) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Username already taken')));
+        setState(() => _loading = false);
+        return;
+      }
+
       await AuthService.instance.signUp(
         email: _emailCtl.text.trim(),
         password: _passCtl.text,
+        username: _usernameCtl.text.trim(),
       );
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/report');
@@ -86,6 +102,25 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    controller: _usernameCtl,
+                    decoration: authInputDecoration(
+                      label: 'Username',
+                      icon: Icons.person_outline_rounded,
+                      context: context,
+                    ),
+                    style: TextStyle(color: AuthColors.getTextColor(context)),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
+                        return 'Username is required';
+                      }
+                      if (v.length < 3) {
+                        return 'Username must be at least 3 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
                     controller: _emailCtl,
                     decoration: authInputDecoration(
                       label: 'Email Address',
@@ -118,7 +153,7 @@ class _SignupPageState extends State<SignupPage> {
                     style: TextStyle(color: AuthColors.getTextColor(context)),
                     obscureText: _obscurePass,
                     validator: (v) =>
-                        (v == null || v.length < 6) ? '6+ chars' : null,
+                        AuthService.instance.validatePassword(v ?? ''),
                   ),
                   const SizedBox(height: 18),
                   _loading

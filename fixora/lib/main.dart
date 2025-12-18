@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'auth/login_page.dart';
 import 'auth/signup_page.dart';
@@ -15,7 +16,25 @@ import 'pages/track_complaint/track_complaint_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  // Initialize Firebase differently for web vs native
+  if (kIsWeb) {
+    // TODO: Replace these values with your actual Web App config from Firebase Console
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyAfAsj5fQ6Z9wULH7KEvk8jwbZX3o6dKdU",
+        authDomain: "fixora-291df.firebaseapp.com",
+        projectId: "fixora-291df",
+        storageBucket: "fixora-291df.firebasestorage.app",
+        messagingSenderId: "882074817980",
+        appId: "1:882074817980:web:84b5679467932ec3cbc7b9",
+      ),
+    );
+  } else {
+    // Android/iOS/desktop use platform-specific config files
+    await Firebase.initializeApp();
+  }
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeProvider(),
