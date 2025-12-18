@@ -20,6 +20,10 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
 
+  <!-- Improve loading of Firebase web modules -->
+  <link rel="preconnect" href="https://www.gstatic.com">
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -31,6 +35,18 @@
 
   <title>fixora</title>
   <link rel="manifest" href="manifest.json">
+  
+  <!-- Preload Firebase ESM modules to avoid dynamic import fetch issues -->
+  <script type="module">
+    try {
+      await import('https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js');
+      await import('https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js');
+      await import('https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js');
+      await import('https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js');
+    } catch (e) {
+      console.warn('Failed to preload Firebase modules:', e);
+    }
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
