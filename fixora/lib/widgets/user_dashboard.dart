@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../auth/auth_service.dart';
 
 class UserDashboard extends StatelessWidget {
   final String email;
@@ -42,8 +43,9 @@ class UserDashboard extends StatelessWidget {
                               child: const Text('Cancel'),
                             ),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 Navigator.pop(context);
+                                await AuthService.instance.signOut();
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   '/',
