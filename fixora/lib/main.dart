@@ -5,6 +5,7 @@ import 'auth/signup_page.dart';
 import 'widgets/user_dashboard.dart';
 import 'pages/landing_page/landing.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'auth/auth_gate.dart';
 import 'pages/raise_issue/raise_issue_page.dart';
 import 'pages/user_dashboard/dashboard.dart';
 import 'pages/admin_dashboard/admin_dashboard.dart';
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
           initialRoute: '/',
           routes: {
             // '/': (context) => const HomePage(),
-            '/': (context) => const LandingPage(),
+            '/': (context) => const AuthGate(),
             // '/': (context) => const TrackComplaintPage(),
             // '/': (context) => const DashboardScreen(),
             // '/': (context) => const AdminDashboardPage(),
