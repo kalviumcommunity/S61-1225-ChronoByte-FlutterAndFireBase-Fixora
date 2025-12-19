@@ -474,3 +474,147 @@ FlutterFire CLI simplified setup, avoided manual configuration, and ensured plat
 
 Setup completed successfully
 
+---
+
+## Data Requirements List
+
+The application needs to store:
+
+**User**
+- userId
+- username
+- email
+- password
+
+**Problem**
+- problemId
+- userId (reference to user)
+- category
+- description
+- priority
+- status
+- image
+- location
+
+---
+
+## Firestore Schema Design
+
+### 🔹 Collections Overview
+
+- **users**
+- **problems**
+
+---
+
+### Users Collection
+
+```
+users (collection)
+ └── userId (document)
+       ├── username: string
+       ├── email: string
+       ├── password: string
+       └── createdAt: timestamp
+```
+
+**Sample User Document:**
+
+```json
+{
+  "username": "guna_priya",
+  "email": "guna@example.com",
+  "password": "hashed_password",
+  "createdAt": "2025-02-10T10:30:00Z"
+}
+```
+
+---
+
+### Problems Collection
+
+```
+problems (collection)
+ └── problemId (document)
+       ├── userId: string
+       ├── category: string
+       ├── description: string
+       ├── priority: string
+       ├── status: string
+       ├── imageUrl: string
+       ├── location: map
+       │      ├── latitude: number
+       │      └── longitude: number
+       ├── createdAt: timestamp
+       └── updatedAt: timestamp
+```
+
+**Sample Problem Document:**
+
+```json
+{
+  "userId": "user_001",
+  "category": "Water",
+  "description": "Water leakage near street corner",
+  "priority": "High",
+  "status": "Pending",
+  "imageUrl": "https://firebase.storage/water_issue.jpg",
+  "location": {
+    "latitude": 12.9716,
+    "longitude": 77.5946
+  },
+  "createdAt": "2025-02-10T11:00:00Z",
+  "updatedAt": "2025-02-10T11:00:00Z"
+}
+```
+
+---
+
+### Relationships
+
+- Each problem stores `userId` to link it with the user who reported it.
+- This avoids large arrays and supports efficient querying.
+
+---
+
+### Schema Diagram
+
+Example structure:
+
+```
+users ────────┐
+              └── problems (linked via userId)
+```
+
+---
+
+### Schema Validation Checklist
+
+✔ Matches application requirements  
+✔ Scales to large user bases  
+✔ Uses proper data types  
+✔ Avoids deeply nested structures  
+✔ Easy to understand and maintain  
+
+---
+
+### Reflection
+
+**Why this structure?**
+
+- Separate collections improve scalability.
+- Using `userId` references avoids duplication.
+- Image URLs reduce document size.
+
+**Performance & Scalability**
+
+- Supports fast queries using indexed fields.
+- Firestore real-time updates improve user experience.
+- No document size limit issues.
+
+**Challenges Faced**
+
+- Choosing between subcollections and top-level collections.
+- Designing location data efficiently.
+- Keeping the schema simple but extensible.
+
