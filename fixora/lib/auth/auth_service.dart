@@ -12,6 +12,17 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  /// Returns the username stored in Firestore for the current user, if any
+  Future<String?> getUsernameForCurrentUser() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if (!doc.exists) return null;
+    final data = doc.data();
+    if (data == null) return null;
+    return (data['username'] as String?) ?? null;
+  }
+
   /// Validates password according to requirements:
   /// 1. At least 6 characters
   /// 2. Starts with a capital letter
