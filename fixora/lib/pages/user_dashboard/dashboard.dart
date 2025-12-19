@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../auth/auth_service.dart';
+import '../../theme/theme_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -8,102 +12,131 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  bool isDark = false;
+  String? _username;
+  bool _loadingUsername = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    setState(() => _loadingUsername = true);
+    try {
+      final name = await AuthService.instance.getUsernameForCurrentUser();
+      setState(() => _username = name);
+    } catch (e) {
+      // ignore errors
+    } finally {
+      setState(() => _loadingUsername = false);
+    }
+  }
+
+  void _onMenuSelected(String value) async {
+    if (value == 'theme') {
+      // toggle app theme via ThemeProvider
+      context.read<ThemeProvider>().toggleTheme();
+    } else if (value == 'logout') {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Logout')),
+          ],
+        ),
+      );
+
+      if (confirmed == true) {
+        await AuthService.instance.signOut();
+        if (!mounted) return;
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: isDark ? _darkTheme() : _lightTheme(),
-      home: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    final userEmail = AuthService.instance.currentUser?.email ?? '';
 
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-
-          title: Text(
-            "Dashboard",
-            style: TextStyle(
-              color: Theme.of(context).primaryColorDark,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          actions: [
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == "theme") {
-                  setState(() {
-                    isDark = !isDark;
-                  });
-                } else if (value == "logout") {
-                  // Logout handling
-                }
-              },
-              icon: Icon(Icons.menu, color: Theme.of(context).primaryColorDark),
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: "theme",
-                  child: Row(
-                    children: [
-                      Icon(Icons.brightness_6),
-                      SizedBox(width: 10),
-                      Text("Toggle Theme"),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: "logout",
-                  child: Row(
-                    children: [
-                      Icon(Icons.logout),
-                      SizedBox(width: 10),
-                      Text("Logout"),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: Text(
+          'Dashboard',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-
-          child: Column(
-            children: [
-              // Search Placeholder
-              Container(
-                height: 45,
-                decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              // Grid Section
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 30,
-                  children: [
-                    _categoryItem("Roads & Transportation"),
-                    _categoryItem("Waste Management"),
-                    _categoryItem("Water Supply"),
-                    _categoryItem("Drainage & Sewage"),
-                    _categoryItem("Noise & Air Pollution"),
-                    _categoryItem("Parks & Public Spaces"),
-                    _categoryItem("Public Safety"),
-                  ],
-                ),
-              ),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: _onMenuSelected,
+            icon: const Icon(Icons.menu),
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'theme', child: Row(children: [Icon(Icons.brightness_6), SizedBox(width: 10), Text('Toggle Theme')],),),
+              const PopupMenuItem(value: 'logout', child: Row(children: [Icon(Icons.logout), SizedBox(width: 10), Text('Logout')],),),
             ],
           ),
+        ],
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Greeting
+            if (_loadingUsername)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(children: [CircularProgressIndicator(), SizedBox(width: 12), Text('Loading...')]),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  _username != null && _username!.isNotEmpty
+                      ? 'Welcome back, ${_username!}'
+                      : 'Hello',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+
+            if (userEmail.isNotEmpty)
+              Text(userEmail, style: Theme.of(context).textTheme.bodyMedium),
+
+            const SizedBox(height: 20),
+
+            // Search Placeholder
+            Container(
+              height: 45,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.06),
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // Grid Section
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 3,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 30,
+                children: [
+                  _categoryItem('Roads & Transportation'),
+                  _categoryItem('Waste Management'),
+                  _categoryItem('Water Supply'),
+                  _categoryItem('Drainage & Sewage'),
+                  _categoryItem('Noise & Air Pollution'),
+                  _categoryItem('Parks & Public Spaces'),
+                  _categoryItem('Public Safety'),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -120,7 +153,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               height: constraints.maxHeight * 0.55,
               width: constraints.maxHeight * 0.55,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: const [
                   BoxShadow(
@@ -132,9 +165,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               child: Center(
                 child: Text(
-                  "No Image",
+                  'No Image',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -150,7 +183,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 title,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).primaryColorDark,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
@@ -161,25 +194,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         );
       },
-    );
-  }
-
-  // LIGHT THEME
-  ThemeData _lightTheme() {
-    return ThemeData(
-      primaryColor: Colors.blue,
-      primaryColorDark: Colors.blue[900],
-      scaffoldBackgroundColor: Colors.white,
-    );
-  }
-
-  // DARK THEME
-  ThemeData _darkTheme() {
-    return ThemeData(
-      brightness: Brightness.dark,
-      primaryColor: Colors.blue,
-      primaryColorDark: Colors.white,
-      scaffoldBackgroundColor: Colors.grey[900],
     );
   }
 }
