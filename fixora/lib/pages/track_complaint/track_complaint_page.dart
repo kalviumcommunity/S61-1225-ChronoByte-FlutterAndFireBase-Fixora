@@ -1,49 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class TrackComplaintPage extends StatelessWidget {
+class TrackComplaintPage extends StatefulWidget {
   const TrackComplaintPage({super.key});
 
+  @override
+  State<TrackComplaintPage> createState() => _TrackComplaintPageState();
+}
+
+class _TrackComplaintPageState extends State<TrackComplaintPage> {
   Color get _primary => const Color(0xFF0D47A1);
   Color get _accent => const Color(0xFF1A73E8);
   Color get _bg => const Color(0xFFF4F7FB);
 
   @override
-  Widget build(BuildContext context) {
-    final complaints = [
-      _ComplaintCardData(
-        title: 'Large pothole on Main Street',
-        id: 'CG-2024-001234',
-        category: 'Roads & Potholes',
-        status: 'In Progress',
-        chipColor: const Color(0xFFFFF3E0),
-        textColor: const Color(0xFFCC8A0E),
-      ),
-      _ComplaintCardData(
-        title: 'No water supply for 3 days',
-        id: 'CG-2024-001235',
-        category: 'Water Supply',
-        status: 'Pending',
-        chipColor: const Color(0xFFFFEBEE),
-        textColor: const Color(0xFFD32F2F),
-      ),
-      _ComplaintCardData(
-        title: 'Street lights not working',
-        id: 'CG-2024-001236',
-        category: 'Street Lights',
-        status: 'Resolved',
-        chipColor: const Color(0xFFE7F5ED),
-        textColor: const Color(0xFF2E7D32),
-      ),
-      _ComplaintCardData(
-        title: 'Garbage not collected',
-        id: 'CG-2024-001237',
-        category: 'Sanitation & Garbage',
-        status: 'In Progress',
-        chipColor: const Color(0xFFFFF3E0),
-        textColor: const Color(0xFFCC8A0E),
-      ),
-    ];
+  void initState() {
+    super.initState();
+    _seedDemoComplaint();
+  }
 
+  Future<void> _seedDemoComplaint() async {
+    // Seed only in debug mode to avoid production test data
+    if (!kDebugMode) return;
+
+    const complaintId = 'CG-2025-001234';
+    try {
+      final existing = await FirebaseFirestore.instance
+          .collection('problems')
+          .where('complaintId', isEqualTo: complaintId)
+          .limit(1)
+          .get();
+
+      if (existing.docs.isEmpty) {
+        final userId = FirebaseAuth.instance.currentUser?.uid ?? 'demo';
+        await FirebaseFirestore.instance.collection('problems').doc().set({
+          'complaintId': complaintId,
+          'userId': userId,
+          'category': 'Road & Transportation',
+          'issue': 'Potholes',
+          'description': 'Demo seeded complaint to verify tracking flow.',
+          'location': 'Main Street, Ward 12',
+          'status': 'Pending',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (_) {
+      // Silent fail in debug; this is only a helper
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
       body: SafeArea(
@@ -57,6 +66,8 @@ class TrackComplaintPage extends StatelessWidget {
               _HeroSection(primary: _primary, accent: _accent),
               const SizedBox(height: 24),
               _DemoIds(accent: _primary),
+              const SizedBox(height: 12),
+              const _CreateDemoButton(),
               const SizedBox(height: 30),
               Text(
                 'Recent Public Complaints',
@@ -66,12 +77,144 @@ class TrackComplaintPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              ...complaints.map((c) => _ComplaintCard(data: c)).toList(),
+              _ComplaintsList(),
               const SizedBox(height: 28),
               _Footer(primary: _primary, accent: _accent),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ComplaintsList extends StatelessWidget {
+  const _ComplaintsList();
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return const Color(0xFFFFEBEE);
+      case 'in progress':
+        return const Color(0xFFFFF3E0);
+      case 'resolved':
+        return const Color(0xFFE7F5ED);
+      default:
+        return const Color(0xFFF5F5F5);
+    }
+  }
+
+  Color _getStatusTextColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return const Color(0xFFD32F2F);
+      case 'in progress':
+        return const Color(0xFFCC8A0E);
+      case 'resolved':
+        return const Color(0xFF2E7D32);
+      default:
+        return const Color(0xFF666666);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('problems')
+          .orderBy('createdAt', descending: true)
+          .limit(50)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'No complaints available yet',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+          );
+        }
+
+        final complaints = snapshot.data!.docs;
+
+        return Column(
+          children: complaints.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            final status = data['status'] ?? 'Pending';
+            final chipColor = _getStatusColor(status);
+            final textColor = _getStatusTextColor(status);
+
+            return _ComplaintCard(
+              data: _ComplaintCardData(
+                title: data['issue'] ?? 'Unknown Issue',
+                id: data['complaintId'] ?? 'CG-XXXXXX',
+                category: data['category'] ?? 'Uncategorized',
+                status: status,
+                chipColor: chipColor,
+                textColor: textColor,
+                description: data['description'] ?? '',
+                location: data['location'] ?? '',
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+
+class _CreateDemoButton extends StatelessWidget {
+  const _CreateDemoButton();
+
+  @override
+  Widget build(BuildContext context) {
+    if (!kDebugMode) return const SizedBox.shrink();
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Align(
+      alignment: Alignment.center,
+      child: OutlinedButton.icon(
+        icon: const Icon(Icons.add),
+        label: const Text('Create Sample Complaint (Debug)'),
+        onPressed: () async {
+          final now = DateTime.now();
+          final year = now.year;
+          final random = DateTime.now().millisecondsSinceEpoch % 1000000;
+          final complaintId = 'CG-$year-${random.toString().padLeft(6, '0')}';
+
+          await FirebaseFirestore.instance.collection('problems').doc().set({
+            'complaintId': complaintId,
+            'userId': user.uid,
+            'category': 'Waste Management',
+            'issue': 'Garbage Overflow',
+            'description':
+                'Sample complaint created for testing via Track page.',
+            'location': 'N/A',
+            'status': 'Pending',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Sample complaint created: $complaintId')),
+            );
+          }
+        },
       ),
     );
   }
@@ -160,6 +303,8 @@ class _TrackingFormState extends State<_TrackingForm> {
             ),
             child: TextField(
               controller: _controller,
+              cursorColor: Colors.black,
+              style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -185,8 +330,50 @@ class _TrackingFormState extends State<_TrackingForm> {
               ),
               elevation: 0,
             ),
-            onPressed: () {
-              // Hook up real tracking action here.
+            onPressed: () async {
+              final trackingId = _controller.text.trim();
+              if (trackingId.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a tracking ID')),
+                );
+                return;
+              }
+
+              try {
+                final snapshot = await FirebaseFirestore.instance
+                    .collection('problems')
+                    .where('complaintId', isEqualTo: trackingId)
+                    .limit(1)
+                    .get();
+
+                if (snapshot.docs.isEmpty) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Complaint ID not found')),
+                    );
+                  }
+                } else {
+                  final data =
+                      snapshot.docs.first.data() as Map<String, dynamic>;
+                  final status = data['status'] ?? 'Unknown';
+                  final category = data['category'] ?? 'Uncategorized';
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Status: $status • $category'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error searching complaint: $e')),
+                  );
+                }
+              }
+
               FocusScope.of(context).unfocus();
             },
             child: const Text(
@@ -223,9 +410,9 @@ class _DemoIds extends StatelessWidget {
           runSpacing: 10,
           alignment: WrapAlignment.center,
           children: const [
-            _Chip(text: 'CG-2024-001234'),
-            _Chip(text: 'CG-2024-001235'),
-            _Chip(text: 'CG-2024-001236'),
+            _Chip(text: 'CG-2024-342891'),
+            _Chip(text: 'CG-2024-567123'),
+            _Chip(text: 'CG-2024-789456'),
           ],
         ),
       ],
@@ -272,6 +459,8 @@ class _ComplaintCardData {
     required this.status,
     required this.chipColor,
     required this.textColor,
+    this.description = '',
+    this.location = '',
   });
 
   final String title;
@@ -280,6 +469,8 @@ class _ComplaintCardData {
   final String status;
   final Color chipColor;
   final Color textColor;
+  final String description;
+  final String location;
 }
 
 class _ComplaintCard extends StatelessWidget {
