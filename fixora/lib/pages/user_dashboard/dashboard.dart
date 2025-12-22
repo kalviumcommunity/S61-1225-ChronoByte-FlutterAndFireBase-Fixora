@@ -37,6 +37,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (value == 'theme') {
       // toggle app theme via ThemeProvider
       context.read<ThemeProvider>().toggleTheme();
+    } else if (value == 'profile') {
+      Navigator.pushNamed(context, '/profile');
     } else if (value == 'logout') {
       final confirmed = await showDialog<bool>(
         context: context,
@@ -75,6 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: const Icon(Icons.menu),
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'theme', child: Row(children: [Icon(Icons.brightness_6), SizedBox(width: 10), Text('Toggle Theme')],),),
+              const PopupMenuItem(value: 'profile', child: Row(children: [Icon(Icons.person), SizedBox(width: 10), Text('Profile')],),),
               const PopupMenuItem(value: 'logout', child: Row(children: [Icon(Icons.logout), SizedBox(width: 10), Text('Logout')],),),
             ],
           ),
