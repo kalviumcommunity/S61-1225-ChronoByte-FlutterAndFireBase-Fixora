@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
             '/login': (context) => const LoginPage(),
             '/report': (context) => const RaiseIssuePage(),
             '/track': (context) => const TrackComplaintPage(),
+            '/profile': (context) => const ProfilePage(),
             '/dashboard': (context) {
               final args =
                   ModalRoute.of(context)?.settings.arguments
