@@ -67,11 +67,13 @@ class AuthService {
       password: password,
     );
 
-    // Store username in Firestore
+    // Determine role based on email domain and store username and role in Firestore
+    final isAdmin = email.toLowerCase().endsWith('@fixoradmin.com');
     await _firestore.collection('users').doc(userCredential.user!.uid).set({
       'username': username,
       'email': email,
-      'createdAt': DateTime.now(),
+      'role': isAdmin ? 'admin' : 'user',
+      'createdAt': FieldValue.serverTimestamp(),
     });
 
     return userCredential;

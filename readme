@@ -668,3 +668,18 @@ Handling Firestore errors gracefully
 ### Outcome
 
 By completing this task, the app can reliably store and update user-generated data (such as complaints or profiles) while ensuring data safety, consistency, and proper error handling.
+
+### Creating a Basic CRUD Flow with Flutter, Firestore, and Auth
+
+This module focuses on building a complete CRUD (Create, Read, Update, Delete) flow using Flutter,
+Firebase Authentication, and Cloud Firestore, which together form a powerful stack for modern mobile application development.
+The goal is to demonstrate how real-world applications manage user data securely while maintaining a responsive and intuitive user interface.
+
+Firebase Authentication is used to identify and authorize users, ensuring that only authenticated users can access and interact with the application’s data.
+Cloud Firestore acts as the primary database, storing structured data and providing real-time updates that automatically reflect changes in the UI without requiring manual refreshes.
+
+The Admin Dashboard showcases how data can be read and displayed in real time, filtered based on status or search criteria,
+updated through user actions, and managed efficiently using Firestore queries. The UI is built to handle loading, empty,
+and error states gracefully, creating a smooth and reliable user experience.
+
+Overall, this implementation follows common industry practices by clearly separating UI components, authentication logic, and database operations. It serves as a practical example of how Flutter applications can scale while remaining maintainable, secure, and responsive.

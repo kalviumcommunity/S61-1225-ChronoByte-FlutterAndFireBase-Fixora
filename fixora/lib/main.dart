@@ -55,6 +55,8 @@ class MyApp extends StatelessWidget {
             '/report': (context) => const RaiseIssuePage(),
             '/track': (context) => const TrackComplaintPage(),
             '/profile': (context) => const ProfilePage(),
+            // Admin route for direct navigation after admin sign-in/sign-up
+            '/admin': (context) => const AdminDashboardPage(),
             '/dashboard': (context) {
               final args =
                   ModalRoute.of(context)?.settings.arguments
