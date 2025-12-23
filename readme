@@ -4,12 +4,34 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 
 ---
 
+
 ## Recent Work (Dec 2025)
 
 - Added status and category filters on the Track Complaint page with client-side filtering to avoid Firestore composite index requirements.
 - Implemented edge-aware overlay menus for filters and a streamlined "View Tracking Details" bottom sheet sized for shorter content (heights at 0.45/0.35/0.8 for large/medium/full views).
 - Tuned typography for complaint details (smaller body text, preserved title size) and tightened padding to reduce visual clutter.
 - Primary changes live in [lib/pages/track_complaint/track_complaint_page.dart](lib/pages/track_complaint/track_complaint_page.dart).
+
+## Complaints & Tracking (Dec 2025)
+
+Recent implementation highlights:
+- **Complaint ID generation**: Every submission generates an ID in the format `CG-YYYY-XXXXXX` (e.g., CG-2025-001234). Implemented in [lib/pages/raise_issue/raise_issue_page.dart](lib/pages/raise_issue/raise_issue_page.dart).
+- **Firestore storage**: Complaints are stored in the `problems` collection with fields such as `complaintId`, `userId`, `category`, `issue`, `description`, `location`, `status`, and `createdAt`.
+- **Track page data**: [lib/pages/track_complaint/track_complaint_page.dart](lib/pages/track_complaint/track_complaint_page.dart) streams all complaints (ordered by `createdAt`) and renders cards with status chips.
+- **Search by ID**: The Track page search box looks up `complaintId` and shows the current status.
+- **Debug seeding**: In debug builds, a helper seeds a sample complaint (ID: CG-2025-001234) and the “Create Sample Complaint (Debug)” button can insert another test entry for the logged-in user.
+- **Demo chips**: Sample IDs are displayed under “Try these demo tracking IDs” for quick manual entry.
+
+How to test quickly:
+1) Run the app (web example):
+```bash
+flutter run -d chrome
+```
+2) Navigate to the Track page (`/track`).
+3) Enter an ID (try CG-2025-001234) and press “Track” to see status.
+4) (Optional) Click “Create Sample Complaint (Debug)” to insert a fresh test complaint, then track the shown ID.
+5) To submit a real complaint, open the report page (`/report`); it will auto-generate a new `complaintId` and save to Firestore.
+
 
 ---
 
@@ -627,3 +649,22 @@ users ────────┐
 - Designing location data efficiently.
 - Keeping the schema simple but extensible.
 
+## Firestore Write Operations (Flutter)
+
+This module demonstrates how to safely write data to Cloud Firestore from a Flutter application.
+
+#### What’s Covered
+
+Adding new documents to Firestore
+
+Updating existing documents without overwriting data
+
+Using structured and scalable write operations
+
+Validating user input before saving
+
+Handling Firestore errors gracefully
+
+### Outcome
+
+By completing this task, the app can reliably store and update user-generated data (such as complaints or profiles) while ensuring data safety, consistency, and proper error handling.

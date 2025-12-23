@@ -57,7 +57,14 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     setState(() => _submitting = true);
     
     try {
+      // Generate unique complaint ID
+      final now = DateTime.now();
+      final year = now.year;
+      final random = DateTime.now().millisecondsSinceEpoch % 1000000; // 6-digit number
+      final complaintId = 'FX-$year-${random.toString().padLeft(6, '0')}';
+
       await FirebaseFirestore.instance.collection('problems').doc().set({
+        'complaintId': complaintId,
         'userId': user.uid,
         'category': _category,
         'issue': _issue,
@@ -68,7 +75,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       });
 
       if (mounted) {
-        _showSnackBar('Issue submitted successfully!');
+        _showSnackBar('Issue submitted successfully! ID: $complaintId');
         _clearForm();
       }
     } catch (e) {

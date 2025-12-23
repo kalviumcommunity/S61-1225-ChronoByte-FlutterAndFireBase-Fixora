@@ -69,6 +69,8 @@ class _TrackComplaintPageState extends State<TrackComplaintPage> {
               _HeroSection(primary: _primary, accent: _accent),
               const SizedBox(height: 24),
               _DemoIds(accent: _primary),
+              const SizedBox(height: 12),
+              const _CreateDemoButton(),
               const SizedBox(height: 30),
               Text(
                 'Recent Public Complaints',
@@ -926,6 +928,8 @@ class _TrackingFormState extends State<_TrackingForm> {
             ),
             child: TextField(
               controller: _controller,
+              cursorColor: Colors.black,
+              style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -951,8 +955,50 @@ class _TrackingFormState extends State<_TrackingForm> {
               ),
               elevation: 0,
             ),
-            onPressed: () {
-              // Hook up real tracking action here.
+            onPressed: () async {
+              final trackingId = _controller.text.trim();
+              if (trackingId.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a tracking ID')),
+                );
+                return;
+              }
+
+              try {
+                final snapshot = await FirebaseFirestore.instance
+                    .collection('problems')
+                    .where('complaintId', isEqualTo: trackingId)
+                    .limit(1)
+                    .get();
+
+                if (snapshot.docs.isEmpty) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Complaint ID not found')),
+                    );
+                  }
+                } else {
+                  final data =
+                      snapshot.docs.first.data() as Map<String, dynamic>;
+                  final status = data['status'] ?? 'Unknown';
+                  final category = data['category'] ?? 'Uncategorized';
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Status: $status • $category'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error searching complaint: $e')),
+                  );
+                }
+              }
+
               FocusScope.of(context).unfocus();
             },
             child: const Text(
@@ -989,9 +1035,9 @@ class _DemoIds extends StatelessWidget {
           runSpacing: 10,
           alignment: WrapAlignment.center,
           children: const [
-            _Chip(text: 'CG-2024-001234'),
-            _Chip(text: 'CG-2024-001235'),
-            _Chip(text: 'CG-2024-001236'),
+            _Chip(text: 'CG-2024-342891'),
+            _Chip(text: 'CG-2024-567123'),
+            _Chip(text: 'CG-2024-789456'),
           ],
         ),
       ],
