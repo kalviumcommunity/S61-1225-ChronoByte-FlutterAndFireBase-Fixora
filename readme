@@ -4,6 +4,15 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 
 ---
 
+## Recent Work (Dec 2025)
+
+- Added status and category filters on the Track Complaint page with client-side filtering to avoid Firestore composite index requirements.
+- Implemented edge-aware overlay menus for filters and a streamlined "View Tracking Details" bottom sheet sized for shorter content (heights at 0.45/0.35/0.8 for large/medium/full views).
+- Tuned typography for complaint details (smaller body text, preserved title size) and tightened padding to reduce visual clutter.
+- Primary changes live in [lib/pages/track_complaint/track_complaint_page.dart](lib/pages/track_complaint/track_complaint_page.dart).
+
+---
+
 ## Setting Up Flutter SDK, Android Studio, and First Emulator Run
 
 Welcome to your first setup deliverable of Sprint #2! In this foundational task, you'll install and configure the Flutter SDK, set up Android Studio (or VS Code) for development, and run your first Flutter app on an emulator or physical device. This step establishes your complete development environment for all upcoming Flutter and Firebase integrations in this sprint.
