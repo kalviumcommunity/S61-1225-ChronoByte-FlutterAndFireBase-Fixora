@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_service.dart';
 import '../widgets/auth_widgets.dart';
 import '../widgets/theme_toggle_button.dart';
@@ -32,7 +33,14 @@ class _LoginPageState extends State<LoginPage> {
         password: _passCtl.text,
       );
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/report');
+      final user = FirebaseAuth.instance.currentUser;
+      final email = user?.email?.toLowerCase() ?? '';
+      if (email.endsWith('@fixoradmin.com')) {
+        Navigator.pushNamedAndRemoveUntil(context, '/admin', (r) => false);
+      } else {
+        // Route to the root which is guarded by AuthGate for regular users
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+      }
     } on Exception catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(

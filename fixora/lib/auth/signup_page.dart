@@ -48,7 +48,13 @@ class _SignupPageState extends State<SignupPage> {
         username: _usernameCtl.text.trim(),
       );
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/report');
+      final email = _emailCtl.text.trim().toLowerCase();
+      if (email.endsWith('@fixoradmin.com')) {
+        Navigator.pushNamedAndRemoveUntil(context, '/admin', (r) => false);
+      } else {
+        // After sign up, navigate to root to let AuthGate route based on role/domain
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+      }
     } on Exception catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
