@@ -4,6 +4,14 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 
 ---
 
+
+## Recent Work (Dec 2025)
+
+- Added status and category filters on the Track Complaint page with client-side filtering to avoid Firestore composite index requirements.
+- Implemented edge-aware overlay menus for filters and a streamlined "View Tracking Details" bottom sheet sized for shorter content (heights at 0.45/0.35/0.8 for large/medium/full views).
+- Tuned typography for complaint details (smaller body text, preserved title size) and tightened padding to reduce visual clutter.
+- Primary changes live in [lib/pages/track_complaint/track_complaint_page.dart](lib/pages/track_complaint/track_complaint_page.dart).
+
 ## Complaints & Tracking (Dec 2025)
 
 Recent implementation highlights:
@@ -23,6 +31,7 @@ flutter run -d chrome
 3) Enter an ID (try CG-2025-001234) and press “Track” to see status.
 4) (Optional) Click “Create Sample Complaint (Debug)” to insert a fresh test complaint, then track the shown ID.
 5) To submit a real complaint, open the report page (`/report`); it will auto-generate a new `complaintId` and save to Firestore.
+
 
 ---
 
