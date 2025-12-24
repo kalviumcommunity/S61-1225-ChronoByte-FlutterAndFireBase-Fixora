@@ -122,6 +122,39 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     });
   }
 
+  Widget _buildSignedOutBanner() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.yellow.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.yellow.shade700),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.info_outline, color: Colors.black87),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Text(
+              'You are not signed in. Sign in to submit a complaint and view your submissions.',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, '/login'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _darkBlue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('Sign in'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _descriptionController.dispose();
@@ -202,28 +235,9 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                 _buildCard(
                   isSmall,
                   children: [
-                    _buildDropdown(
-                      label: 'Category',
-                      value: _category,
-                      hint: 'Select complaint category',
-                      items: _issuesMap.keys.toList(),
-                      onChanged: (v) => setState(() {
-                        _category = v;
-                        _issue = null;
-                      }),
-                      icon: Icons.category_outlined,
-                    ),
-                    if (_category != null) ...[
-                      const SizedBox(height: 16),
-                      _buildDropdown(
-                        label: 'Issue',
-                        value: _issue,
-                        hint: 'Select specific issue',
-                        items: _issuesMap[_category]!,
-                        onChanged: (v) => setState(() => _issue = v),
-                        icon: Icons.report_problem_outlined,
-                      ),
-                    ],
+                    if (user == null) _buildSignedOutBanner(),
+                    _buildHeader(isSmall),
+                    _buildSectionHeader('Complaint Details', Icons.description, isSmall),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _descriptionController,
@@ -248,6 +262,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                           : null,
                       helperText: 'Street address, ward number, or landmark',
                     ),
+                    SizedBox(height: isSmall ? 24 : 32),
+                    _buildSubmitButton(isSmall, signedIn: user != null),
+                    SizedBox(height: isSmall ? 24 : 32),
+                    _buildFooter(isSmall),
+                    SizedBox(height: isSmall ? 16 : 24),
                   ],
                 ),
                 SizedBox(height: isSmall ? 24 : 32),
@@ -396,7 +415,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     required String? value,
     required String hint,
     required List<String> items,
-    required ValueChanged<String?> onChanged,
+    ValueChanged<String?>? onChanged,
     required IconData icon,
   }) {
     return DropdownButtonFormField<String>(
@@ -419,7 +438,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
           )
           .toList(),
       onChanged: onChanged,
-      validator: (v) => v == null ? 'Please select $label' : null,
+      validator: (v) {
+        if (onChanged == null) return 'Please sign in to select $label';
+        return v == null ? 'Please select $label' : null;
+      },
     );
   }
 
@@ -433,9 +455,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
     String? helperText,
+    bool enabled = true,
   }) {
     return TextFormField(
       controller: controller,
+      enabled: enabled,
       maxLines: maxLines,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
@@ -446,7 +470,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
         icon: icon,
         helperText: helperText,
       ),
-      validator: validator,
+      validator: enabled ? validator : null,
       onChanged: (_) => setState(() {}),
     );
   }
