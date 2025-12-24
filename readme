@@ -683,3 +683,40 @@ updated through user actions, and managed efficiently using Firestore queries. T
 and error states gracefully, creating a smooth and reliable user experience.
 
 Overall, this implementation follows common industry practices by clearly separating UI components, authentication logic, and database operations. It serves as a practical example of how Flutter applications can scale while remaining maintainable, secure, and responsive.
+
+
+## Securing Firebase with Authentication and Firestore Rules
+
+This implementation strengthens application security by combining Firebase Authentication with Firestore Security Rules to ensure that only authorized users can access and modify data.
+
+### Authentication
+
+Firebase Authentication is used to manage user sign-in.
+
+Only authenticated users are allowed to interact with Firestore.
+
+User identity is verified using Firebase-issued ID tokens.
+
+### Firestore Security Rules
+
+Firestore rules restrict read and write access to authenticated users only.
+
+Role-based access control is enforced using user roles (e.g., admin).
+
+Sensitive collections and operations (such as admin dashboards and data management) are protected from unauthorized access.
+
+Rules validate user permissions before allowing data modifications.
+
+### Security Benefits
+
+Prevents unauthorized data access
+
+Protects sensitive admin-only operations
+
+Ensures data integrity by validating user identity and roles
+
+Reduces risk of client-side manipulation
+
+### Outcome
+
+With these measures in place, the application follows Firebase security best practices, providing a safer and more reliable backend for both users and administrators.

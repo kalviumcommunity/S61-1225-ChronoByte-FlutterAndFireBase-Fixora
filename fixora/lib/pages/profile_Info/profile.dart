@@ -140,6 +140,73 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 8),
                   OutlinedButton(onPressed: _handleLogout, child: const Text('Logout')),
 
+                  const SizedBox(height: 16),
+                  // Auth debug card: shows ID token claims and allows refresh
+                  Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Text('Auth Info', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                          TextButton(
+                            onPressed: () async {
+                              // Force token refresh
+                              try {
+                                await user?.getIdTokenResult(true);
+                                setState(() {});
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Token refreshed')));
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error refreshing token: $e')));
+                              }
+                            },
+                            child: const Text('Refresh'),
+                          )
+                        ]),
+                        const SizedBox(height: 8),
+                        FutureBuilder<IdTokenResult?>(
+                          future: user?.getIdTokenResult(false),
+                          builder: (context, tokSnap) {
+                            if (tokSnap.connectionState == ConnectionState.waiting) return const SizedBox(height: 40, child: Center(child: CircularProgressIndicator()));
+                            if (tokSnap.hasError) return Text('Error getting token: ${tokSnap.error}');
+                            final claims = tokSnap.data?.claims ?? {};
+                            return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text('UID: ${user?.uid ?? '-'}', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                              const SizedBox(height: 6),
+                              Text('Email: ${user?.email ?? '-'}', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                              const SizedBox(height: 8),
+                              Text('Claims:', style: const TextStyle(fontWeight: FontWeight.w600)),
+                              const SizedBox(height: 6),
+                              if (claims.isEmpty) const Text('No custom claims detected'),
+                              if (claims.isNotEmpty) ...[
+                                for (final entry in claims.entries) Padding(padding: const EdgeInsets.only(bottom: 4), child: Text('${entry.key}: ${entry.value}'))
+                              ],
+                              const SizedBox(height: 8),
+                              Row(children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    final text = 'uid=${user?.uid}\nemail=${user?.email}\nclaims=${claims.toString()}';
+                                    Clipboard.setData(ClipboardData(text: text));
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Auth info copied to clipboard')));
+                                  },
+                                  child: const Text('Copy'),
+                                ),
+                                const SizedBox(width: 8),
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    // open login page for re-auth
+                                    await Navigator.pushNamed(context, '/login');
+                                  },
+                                  child: const Text('Re-auth / Login'),
+                                ),
+                              ])
+                            ]);
+                          },
+                        ),
+                      ]),
+                    ),
+                  ),
+
                   const SizedBox(height: 24),
                   Text('Raised Complaints', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),

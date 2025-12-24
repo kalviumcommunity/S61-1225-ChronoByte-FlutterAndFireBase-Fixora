@@ -111,6 +111,39 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     });
   }
 
+  Widget _buildSignedOutBanner() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.yellow.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.yellow.shade700),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.info_outline, color: Colors.black87),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Text(
+              'You are not signed in. Sign in to submit a complaint and view your submissions.',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, '/login'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _darkBlue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('Sign in'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _descriptionController.dispose();
@@ -169,69 +202,80 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             horizontal: isSmall ? 16 : 24,
             vertical: isSmall ? 0 : 16,
           ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildHeader(isSmall),
-                _buildSectionHeader('Complaint Details', Icons.description, isSmall),
-                const SizedBox(height: 16),
-                _buildCard(
-                  isSmall,
+          child: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, authSnap) {
+              final user = authSnap.data;
+              return Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildDropdown(
-                      label: 'Category',
-                      value: _category,
-                      hint: 'Select complaint category',
-                      items: _issuesMap.keys.toList(),
-                      onChanged: (v) => setState(() {
-                        _category = v;
-                        _issue = null;
-                      }),
-                      icon: Icons.category_outlined,
-                    ),
-                    if (_category != null) ...[
-                      const SizedBox(height: 16),
-                      _buildDropdown(
-                        label: 'Issue',
-                        value: _issue,
-                        hint: 'Select specific issue',
-                        items: _issuesMap[_category]!,
-                        onChanged: (v) => setState(() => _issue = v),
-                        icon: Icons.report_problem_outlined,
-                      ),
-                    ],
+                    if (user == null) _buildSignedOutBanner(),
+                    _buildHeader(isSmall),
+                    _buildSectionHeader('Complaint Details', Icons.description, isSmall),
                     const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _descriptionController,
-                      label: 'Description (min 20 words) [$_wordCount/20]',
-                      icon: Icons.description_outlined,
-                      maxLines: 5,
-                      validator: (_) => _validDescription ? null : 'Minimum 20 words required (current: $_wordCount)',
-                      helperText: 'Provide detailed information about the issue',
+                    _buildCard(
+                      isSmall,
+                      children: [
+                        _buildDropdown(
+                          label: 'Category',
+                          value: _category,
+                          hint: 'Select complaint category',
+                          items: _issuesMap.keys.toList(),
+                          onChanged: user == null ? null : (v) => setState(() {
+                            _category = v;
+                            _issue = null;
+                          }),
+                          icon: Icons.category_outlined,
+                        ),
+                        if (_category != null) ...[
+                          const SizedBox(height: 16),
+                          _buildDropdown(
+                            label: 'Issue',
+                            value: _issue,
+                            hint: 'Select specific issue',
+                            items: _issuesMap[_category]!,
+                            onChanged: user == null ? null : (v) => setState(() => _issue = v),
+                            icon: Icons.report_problem_outlined,
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                          controller: _descriptionController,
+                          label: 'Description (min 20 words) [$_wordCount/20]',
+                          icon: Icons.description_outlined,
+                          maxLines: 5,
+                          validator: user == null ? null : (_) => _validDescription ? null : 'Minimum 20 words required (current: $_wordCount)',
+                          helperText: 'Provide detailed information about the issue',
+                          enabled: user != null,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                          controller: _locationController,
+                          label: 'Location',
+                          icon: Icons.location_on_outlined,
+                          validator: user == null
+                              ? null
+                              : (v) => v == null || v.trim().isEmpty
+                                  ? 'Location is required'
+                                  : v.trim().length < 5
+                                      ? 'Please provide a detailed location'
+                                      : null,
+                          helperText: 'Street address, ward number, or landmark',
+                          enabled: user != null,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _locationController,
-                      label: 'Location',
-                      icon: Icons.location_on_outlined,
-                      validator: (v) => v == null || v.trim().isEmpty
-                          ? 'Location is required'
-                          : v.trim().length < 5
-                              ? 'Please provide a detailed location'
-                              : null,
-                      helperText: 'Street address, ward number, or landmark',
-                    ),
+                    SizedBox(height: isSmall ? 24 : 32),
+                    _buildSubmitButton(isSmall, signedIn: user != null),
+                    SizedBox(height: isSmall ? 24 : 32),
+                    _buildFooter(isSmall),
+                    SizedBox(height: isSmall ? 16 : 24),
                   ],
                 ),
-                SizedBox(height: isSmall ? 24 : 32),
-                _buildSubmitButton(isSmall),
-                SizedBox(height: isSmall ? 24 : 32),
-                _buildFooter(isSmall),
-                SizedBox(height: isSmall ? 16 : 24),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -337,7 +381,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     required String? value,
     required String hint,
     required List<String> items,
-    required ValueChanged<String?> onChanged,
+    ValueChanged<String?>? onChanged,
     required IconData icon,
   }) {
     return DropdownButtonFormField<String>(
@@ -350,7 +394,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
           .map((item) => DropdownMenuItem(value: item, child: Text(item, style: const TextStyle(color: Color(0xFF0F172A)))))
           .toList(),
       onChanged: onChanged,
-      validator: (v) => v == null ? 'Please select $label' : null,
+      validator: (v) {
+        if (onChanged == null) return 'Please sign in to select $label';
+        return v == null ? 'Please select $label' : null;
+      },
     );
   }
 
@@ -364,9 +411,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
     String? helperText,
+    bool enabled = true,
   }) {
     return TextFormField(
       controller: controller,
+      enabled: enabled,
       maxLines: maxLines,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
@@ -377,7 +426,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
         icon: icon,
         helperText: helperText,
       ),
-      validator: validator,
+      validator: enabled ? validator : null,
       onChanged: (_) => setState(() {}),
     );
   }
@@ -421,11 +470,13 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     );
   }
 
-  Widget _buildSubmitButton(bool isSmall) {
+  Widget _buildSubmitButton(bool isSmall, {required bool signedIn}) {
     return SizedBox(
       height: 54,
       child: ElevatedButton(
-        onPressed: _submitting ? null : _submit,
+        onPressed: _submitting
+            ? null
+            : (signedIn ? _submit : () => Navigator.pushNamed(context, '/login')),
         style: ElevatedButton.styleFrom(
           backgroundColor: _primaryBlue,
           foregroundColor: Colors.white,
@@ -448,7 +499,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                   const Icon(Icons.send, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    'Submit Complaint',
+                    signedIn ? 'Submit Complaint' : 'Sign in to Submit',
                     style: TextStyle(fontSize: isSmall ? 16 : 17, fontWeight: FontWeight.w600),
                   ),
                 ],
