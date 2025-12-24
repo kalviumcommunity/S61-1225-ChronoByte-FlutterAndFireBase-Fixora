@@ -14,10 +14,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   final _formKey = GlobalKey<FormState>();
   final _descriptionController = TextEditingController();
   final _locationController = TextEditingController();
-  
+
   String? _category;
   String? _issue;
   bool _submitting = false;
+  bool _agreeToTerms = false;
 
   // Blue color scheme
   static const _primaryBlue = Color(0xFF2563EB);
@@ -25,7 +26,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   static const _lightBlue = Color(0xFFDEEAFF);
 
   static const _issuesMap = {
-    'Road & Transportation': ['Potholes', 'Broken Signals', 'Traffic Congestion'],
+    'Road & Transportation': [
+      'Potholes',
+      'Broken Signals',
+      'Traffic Congestion',
+    ],
     'Waste Management': ['Garbage Overflow', 'Irregular Collection'],
     'Water Supply': ['No Water', 'Low Pressure', 'Contaminated Water'],
     'Drainage & Sewage': ['Overflow', 'Blocked Drains'],
@@ -34,7 +39,8 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     'Public Safety': ['Street Lights Not Working', 'Unsafe Area'],
   };
 
-  int get _wordCount => _descriptionController.text.trim()
+  int get _wordCount => _descriptionController.text
+      .trim()
       .split(RegExp(r'\s+'))
       .where((s) => s.isNotEmpty)
       .length;
@@ -53,14 +59,15 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       _showSnackBar('Please sign in to submit an issue', isError: true);
       return;
     }
-    
+
     setState(() => _submitting = true);
-    
+
     try {
       // Generate unique complaint ID
       final now = DateTime.now();
       final year = now.year;
-      final random = DateTime.now().millisecondsSinceEpoch % 1000000; // 6-digit number
+      final random =
+          DateTime.now().millisecondsSinceEpoch % 1000000; // 6-digit number
       final complaintId = 'FX-$year-${random.toString().padLeft(6, '0')}';
 
       await FirebaseFirestore.instance.collection('problems').doc().set({
@@ -90,7 +97,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       SnackBar(
         content: Row(
           children: [
-            Icon(isError ? Icons.error_outline : Icons.check_circle, color: Colors.white),
+            Icon(
+              isError ? Icons.error_outline : Icons.check_circle,
+              color: Colors.white,
+            ),
             const SizedBox(width: 12),
             Expanded(child: Text(message)),
           ],
@@ -108,6 +118,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       _issue = null;
       _descriptionController.clear();
       _locationController.clear();
+      _agreeToTerms = false;
     });
   }
 
@@ -155,7 +166,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        colorScheme: ColorScheme.light(primary: _primaryBlue, secondary: _darkBlue),
+        colorScheme: ColorScheme.light(
+          primary: _primaryBlue,
+          secondary: _darkBlue,
+        ),
       ),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
@@ -181,7 +195,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
           const SizedBox(width: 12),
           const Text(
             'Fixora - Raise Issue',
-            style: TextStyle(color: Color(0xFF1E293B), fontWeight: FontWeight.w600, fontSize: 18),
+            style: TextStyle(
+              color: Color(0xFF1E293B),
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+            ),
           ),
         ],
       ),
@@ -202,70 +220,47 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             horizontal: isSmall ? 16 : 24,
             vertical: isSmall ? 0 : 16,
           ),
-          child: StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, authSnap) {
-              final user = authSnap.data;
-              return Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildHeader(isSmall),
+                _buildSectionHeader(
+                  'Complaint Details',
+                  Icons.description,
+                  isSmall,
+                ),
+                const SizedBox(height: 16),
+                _buildCard(
+                  isSmall,
                   children: [
                     if (user == null) _buildSignedOutBanner(),
                     _buildHeader(isSmall),
                     _buildSectionHeader('Complaint Details', Icons.description, isSmall),
                     const SizedBox(height: 16),
-                    _buildCard(
-                      isSmall,
-                      children: [
-                        _buildDropdown(
-                          label: 'Category',
-                          value: _category,
-                          hint: 'Select complaint category',
-                          items: _issuesMap.keys.toList(),
-                          onChanged: user == null ? null : (v) => setState(() {
-                            _category = v;
-                            _issue = null;
-                          }),
-                          icon: Icons.category_outlined,
-                        ),
-                        if (_category != null) ...[
-                          const SizedBox(height: 16),
-                          _buildDropdown(
-                            label: 'Issue',
-                            value: _issue,
-                            hint: 'Select specific issue',
-                            items: _issuesMap[_category]!,
-                            onChanged: user == null ? null : (v) => setState(() => _issue = v),
-                            icon: Icons.report_problem_outlined,
-                          ),
-                        ],
-                        const SizedBox(height: 16),
-                        _buildTextField(
-                          controller: _descriptionController,
-                          label: 'Description (min 20 words) [$_wordCount/20]',
-                          icon: Icons.description_outlined,
-                          maxLines: 5,
-                          validator: user == null ? null : (_) => _validDescription ? null : 'Minimum 20 words required (current: $_wordCount)',
-                          helperText: 'Provide detailed information about the issue',
-                          enabled: user != null,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildTextField(
-                          controller: _locationController,
-                          label: 'Location',
-                          icon: Icons.location_on_outlined,
-                          validator: user == null
-                              ? null
-                              : (v) => v == null || v.trim().isEmpty
-                                  ? 'Location is required'
-                                  : v.trim().length < 5
-                                      ? 'Please provide a detailed location'
-                                      : null,
-                          helperText: 'Street address, ward number, or landmark',
-                          enabled: user != null,
-                        ),
-                      ],
+                    _buildTextField(
+                      controller: _descriptionController,
+                      label: 'Description (min 20 words) [$_wordCount/20]',
+                      icon: Icons.description_outlined,
+                      maxLines: 5,
+                      validator: (_) => _validDescription
+                          ? null
+                          : 'Minimum 20 words required (current: $_wordCount)',
+                      helperText:
+                          'Provide detailed information about the issue',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _locationController,
+                      label: 'Location',
+                      icon: Icons.location_on_outlined,
+                      validator: (v) => v == null || v.trim().isEmpty
+                          ? 'Location is required'
+                          : v.trim().length < 5
+                          ? 'Please provide a detailed location'
+                          : null,
+                      helperText: 'Street address, ward number, or landmark',
                     ),
                     SizedBox(height: isSmall ? 24 : 32),
                     _buildSubmitButton(isSmall, signedIn: user != null),
@@ -274,8 +269,15 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                     SizedBox(height: isSmall ? 16 : 24),
                   ],
                 ),
-              );
-            },
+                SizedBox(height: isSmall ? 24 : 32),
+                _buildCheckboxField(isSmall),
+                SizedBox(height: isSmall ? 16 : 20),
+                _buildSubmitButton(isSmall),
+                SizedBox(height: isSmall ? 24 : 32),
+                _buildFooter(isSmall),
+                SizedBox(height: isSmall ? 16 : 24),
+              ],
+            ),
           ),
         ),
       ),
@@ -284,12 +286,18 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
 
   Widget _buildHeader(bool isSmall) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: isSmall ? 24 : 32, horizontal: isSmall ? 16 : 24),
+      padding: EdgeInsets.symmetric(
+        vertical: isSmall ? 24 : 32,
+        horizontal: isSmall ? 16 : 24,
+      ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: _lightBlue, borderRadius: BorderRadius.circular(16)),
+            decoration: BoxDecoration(
+              color: _lightBlue,
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: _brandLogo(size: isSmall ? 36 : 48),
           ),
           SizedBox(height: isSmall ? 16 : 20),
@@ -305,7 +313,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
           Text(
             'Fill out the form below to register your civic grievance. All fields marked with * are required.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: isSmall ? 14 : 15, color: const Color(0xFF64748B), height: 1.5),
+            style: TextStyle(
+              fontSize: isSmall ? 14 : 15,
+              color: const Color(0xFF64748B),
+              height: 1.5,
+            ),
           ),
         ],
       ),
@@ -322,17 +334,29 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
         color: Colors.white,
         shape: circular ? BoxShape.circle : BoxShape.rectangle,
         borderRadius: circular ? null : BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: Offset(0, 3))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
         border: Border.all(color: Colors.black.withOpacity(0.04)),
       ),
       child: ClipRRect(
-        borderRadius: circular ? BorderRadius.circular(999) : BorderRadius.circular(8),
+        borderRadius: circular
+            ? BorderRadius.circular(999)
+            : BorderRadius.circular(8),
         child: Image.asset(
           'assets/images/logo.png',
           height: size,
           width: size,
           fit: BoxFit.contain,
-          errorBuilder: (context, error, stack) => Icon(Icons.image_not_supported_outlined, color: _primaryBlue, size: size),
+          errorBuilder: (context, error, stack) => Icon(
+            Icons.image_not_supported_outlined,
+            color: _primaryBlue,
+            size: size,
+          ),
         ),
       ),
     );
@@ -340,7 +364,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
 
   Widget _buildSectionHeader(String title, IconData icon, bool isSmall) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: isSmall ? 12 : 16, horizontal: isSmall ? 16 : 20),
+      padding: EdgeInsets.symmetric(
+        vertical: isSmall ? 12 : 16,
+        horizontal: isSmall ? 16 : 20,
+      ),
       decoration: BoxDecoration(
         color: _lightBlue.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12),
@@ -369,10 +396,17 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: children,
+      ),
     );
   }
 
@@ -388,10 +422,20 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       decoration: _inputDecoration(label: '$label *', icon: icon),
       value: value,
       hint: Text(hint, style: const TextStyle(color: Color(0xFF94A3B8))),
-      style: const TextStyle(color: Color(0xFF0F172A)), // dark text for visibility
+      style: const TextStyle(
+        color: Color(0xFF0F172A),
+      ), // dark text for visibility
       dropdownColor: Colors.white,
       items: items
-          .map((item) => DropdownMenuItem(value: item, child: Text(item, style: const TextStyle(color: Color(0xFF0F172A)))))
+          .map(
+            (item) => DropdownMenuItem(
+              value: item,
+              child: Text(
+                item,
+                style: const TextStyle(color: Color(0xFF0F172A)),
+              ),
+            ),
+          )
           .toList(),
       onChanged: onChanged,
       validator: (v) {
@@ -470,19 +514,72 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     );
   }
 
-  Widget _buildSubmitButton(bool isSmall, {required bool signedIn}) {
+  Widget _buildCheckboxField(bool isSmall) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmall ? 12 : 16,
+        vertical: isSmall ? 12 : 14,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _agreeToTerms ? _primaryBlue : const Color(0xFFE2E8F0),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 24,
+            height: 24,
+            child: Checkbox(
+              value: _agreeToTerms,
+              onChanged: (value) =>
+                  setState(() => _agreeToTerms = value ?? false),
+              activeColor: _primaryBlue,
+              side: BorderSide(color: _primaryBlue, width: 2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ),
+          SizedBox(width: isSmall ? 12 : 14),
+          Expanded(
+            child: Text(
+              'I agree to provide accurate information and accept the Fixora Terms & Conditions',
+              style: TextStyle(
+                fontSize: isSmall ? 13 : 14,
+                color: const Color(0xFF0F172A),
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton(bool isSmall) {
     return SizedBox(
       height: 54,
       child: ElevatedButton(
-        onPressed: _submitting
-            ? null
-            : (signedIn ? _submit : () => Navigator.pushNamed(context, '/login')),
+        onPressed: (_submitting || !_agreeToTerms) ? null : _submit,
         style: ElevatedButton.styleFrom(
           backgroundColor: _primaryBlue,
           foregroundColor: Colors.white,
           disabledBackgroundColor: _primaryBlue.withOpacity(0.6),
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         child: _submitting
             ? const SizedBox(
@@ -499,8 +596,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                   const Icon(Icons.send, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    signedIn ? 'Submit Complaint' : 'Sign in to Submit',
-                    style: TextStyle(fontSize: isSmall ? 16 : 17, fontWeight: FontWeight.w600),
+                    'Submit Complaint',
+                    style: TextStyle(
+                      fontSize: isSmall ? 16 : 17,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -511,7 +611,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   Widget _buildFooter(bool isSmall) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         children: [
           Row(
@@ -519,21 +622,35 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             children: [
               _brandLogo(size: 28),
               const SizedBox(width: 8),
-              const Text('Fixora', style: TextStyle(color: Color(0xFF1E293B), fontWeight: FontWeight.w600, fontSize: 16)),
+              const Text(
+                'Fixora',
+                style: TextStyle(
+                  color: Color(0xFF1E293B),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             'A transparent and efficient platform for citizens to raise and track civic complaints with Urban Local Bodies.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: isSmall ? 13 : 14, color: const Color(0xFF64748B), height: 1.5),
+            style: TextStyle(
+              fontSize: isSmall ? 13 : 14,
+              color: const Color(0xFF64748B),
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 16),
           const Divider(),
           const SizedBox(height: 8),
           Text(
             '© 2025 Fixora Portal. All rights reserved.',
-            style: TextStyle(fontSize: isSmall ? 12 : 13, color: const Color(0xFF94A3B8)),
+            style: TextStyle(
+              fontSize: isSmall ? 12 : 13,
+              color: const Color(0xFF94A3B8),
+            ),
           ),
         ],
       ),

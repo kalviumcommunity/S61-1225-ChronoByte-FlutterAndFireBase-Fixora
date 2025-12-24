@@ -45,14 +45,15 @@ class MyApp extends StatelessWidget {
           initialRoute: '/',
           routes: {
             // '/': (context) => const HomePage(),
-            '/': (context) => const AuthGate(),
+            // '/': (context) => const AuthGate(),
             // '/': (context) => const TrackComplaintPage(),
             // '/': (context) => const DashboardScreen(),
             // '/': (context) => const AdminDashboardPage(),
             // '/': (context) => const ProfilePage(),
             '/signup': (context) => const SignupPage(),
             '/login': (context) => const LoginPage(),
-            '/report': (context) => const RaiseIssuePage(),
+            // '/report': (context) => const RaiseIssuePage(),
+            '/': (context) => const RaiseIssuePage(),
             '/track': (context) => const TrackComplaintPage(),
             '/profile': (context) => const ProfilePage(),
             // Admin route for direct navigation after admin sign-in/sign-up

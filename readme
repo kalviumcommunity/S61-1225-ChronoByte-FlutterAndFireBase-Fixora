@@ -7,6 +7,24 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 
 ## Recent Work (Dec 2025)
 
+### Raise Issue Page Enhancements
+
+- **Added Terms & Conditions Checkbox**: Implemented a styled checkbox field that users must check before submitting a complaint. This ensures users acknowledge and agree to provide accurate information and accept the Fixora Terms & Conditions.
+  - **Checkbox State Management**: New boolean state variable `_agreeToTerms` tracks the checkbox status.
+  - **Submit Button Lock**: The submit button is now disabled until the checkbox is checked, preventing accidental or false submissions.
+  - **Form Reset**: After successful submission, the checkbox is automatically unchecked along with other form fields, preparing the form for the next complaint entry.
+  - **Visual Design**: The checkbox has a styled container with a blue border that changes color when selected, matching the app's blue theme (primary color: #2563EB).
+  - **Implementation Location**: [lib/pages/raise_issue/raise_issue_page.dart](lib/pages/raise_issue/raise_issue_page.dart)
+
+**How it works:**
+1. User fills in all complaint details (category, issue, description, location).
+2. Before submitting, user must check the "I agree to provide accurate information and accept the Fixora Terms & Conditions" checkbox.
+3. The submit button changes from disabled (grayed out) to enabled only when the checkbox is checked.
+4. After successful submission, a success message is shown with the complaint ID and the form is cleared (including unchecking the checkbox).
+5. User can now submit another complaint if needed.
+
+### Previous Work (Earlier Dec 2025)
+
 - Added status and category filters on the Track Complaint page with client-side filtering to avoid Firestore composite index requirements.
 - Implemented edge-aware overlay menus for filters and a streamlined "View Tracking Details" bottom sheet sized for shorter content (heights at 0.45/0.35/0.8 for large/medium/full views).
 - Tuned typography for complaint details (smaller body text, preserved title size) and tightened padding to reduce visual clutter.
