@@ -749,3 +749,36 @@ Reduces risk of client-side manipulation
 ### Outcome
 
 With these measures in place, the application follows Firebase security best practices, providing a safer and more reliable backend for both users and administrators.
+
+### Dark Mode & Dynamic Theming (Flutter)
+
+This app uses Flutter’s theming system to support Light Mode, Dark Mode, and dynamic theme switching across the entire application.
+
+Features
+
+App-wide Light & Dark themes using ThemeData and ColorScheme
+
+Material 3–based styling
+
+Runtime theme switching (Light / Dark / System)
+
+User theme preference persisted using SharedPreferences
+
+Centralized theme configuration for consistent UI
+
+All screens, forms, dialogs, and widgets adapt automatically
+
+### How It Works
+
+Themes are defined in a central theme file
+
+MaterialApp applies theme, darkTheme, and themeMode
+
+A ThemeProvider / ThemeNotifier manages theme state
+
+A toggle (Settings or AppBar) allows users to switch themes
+
+### Usage
+
+Run the app and use the theme toggle to change between Light and Dark modes.
+The app remembers your choice on the next launch.

@@ -20,10 +20,16 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   bool _submitting = false;
   bool _agreeToTerms = false;
 
-  // Blue color scheme
-  static const _primaryBlue = Color(0xFF2563EB);
-  static const _darkBlue = Color(0xFF1E40AF);
-  static const _lightBlue = Color(0xFFDEEAFF);
+  // Dynamic colors based on theme
+  Color get _primaryBlue => Theme.of(context).colorScheme.primary;
+  Color get _darkBlue => Theme.of(context).colorScheme.secondary;
+  Color get _lightBlue => Theme.of(context).brightness == Brightness.dark
+      ? const Color(0xFF1E293B)
+      : const Color(0xFFDEEAFF);
+  Color get _backgroundColor => Theme.of(context).scaffoldBackgroundColor;
+  Color get _surfaceColor => Theme.of(context).cardColor;
+  Color get _textColor => Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+  Color get _secondaryTextColor => Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
 
   static const _issuesMap = {
     'Road & Transportation': [
@@ -131,46 +137,40 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        colorScheme: ColorScheme.light(
-          primary: _primaryBlue,
-          secondary: _darkBlue,
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
-        appBar: _buildAppBar(),
-        body: LayoutBuilder(
-          builder: (context, constraints) => _buildBody(constraints),
-        ),
+    return Scaffold(
+      backgroundColor: _backgroundColor,
+      appBar: _buildAppBar(),
+      body: LayoutBuilder(
+        builder: (context, constraints) => _buildBody(constraints),
       ),
     );
   }
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: _surfaceColor,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
+        icon: Icon(Icons.arrow_back, color: _textColor),
         onPressed: () => Navigator.pop(context),
       ),
       title: Row(
         children: [
           _brandLogo(size: 28),
           const SizedBox(width: 12),
-          const Text(
+          Text(
             'Fixora - Raise Issue',
             style: TextStyle(
-              color: Color(0xFF1E293B),
+              color: _textColor,
               fontWeight: FontWeight.w600,
               fontSize: 18,
             ),
           ),
         ],
       ),
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      systemOverlayStyle: Theme.of(context).brightness == Brightness.dark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
     );
   }
 
@@ -287,7 +287,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             style: TextStyle(
               fontSize: isSmall ? 24 : 28,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF1E293B),
+              color: _textColor,
             ),
           ),
           SizedBox(height: isSmall ? 8 : 12),
@@ -296,7 +296,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: isSmall ? 14 : 15,
-              color: const Color(0xFF64748B),
+              color: _secondaryTextColor,
               height: 1.5,
             ),
           ),
@@ -362,7 +362,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             style: TextStyle(
               fontSize: isSmall ? 16 : 17,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1E293B),
+              color: _textColor,
             ),
           ),
         ],
@@ -374,7 +374,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     return Container(
       padding: EdgeInsets.all(isSmall ? 16 : 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surfaceColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -402,18 +402,18 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     return DropdownButtonFormField<String>(
       decoration: _inputDecoration(label: '$label *', icon: icon),
       value: value,
-      hint: Text(hint, style: const TextStyle(color: Color(0xFF94A3B8))),
-      style: const TextStyle(
-        color: Color(0xFF0F172A),
+      hint: Text(hint, style: TextStyle(color: _secondaryTextColor)),
+      style: TextStyle(
+        color: _textColor,
       ), // dark text for visibility
-      dropdownColor: Colors.white,
+      dropdownColor: _surfaceColor,
       items: items
           .map(
             (item) => DropdownMenuItem(
               value: item,
               child: Text(
                 item,
-                style: const TextStyle(color: Color(0xFF0F172A)),
+                style: TextStyle(color: _textColor),
               ),
             ),
           )
@@ -439,7 +439,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       maxLines: maxLines,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
-      style: const TextStyle(color: Color(0xFF0F172A)),
+      style: TextStyle(color: _textColor),
       cursorColor: _darkBlue,
       decoration: _inputDecoration(
         label: '$label${required ? ' *' : ''}',
@@ -458,9 +458,9 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   }) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Color(0xFF64748B)),
+      labelStyle: TextStyle(color: _secondaryTextColor),
       floatingLabelStyle: TextStyle(color: _primaryBlue),
-      hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+      hintStyle: TextStyle(color: _secondaryTextColor),
       helperText: helperText,
       helperMaxLines: 2,
       prefixIcon: Icon(icon, color: _primaryBlue, size: 20),
@@ -474,7 +474,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: _primaryBlue, width: 2),
+        borderSide: BorderSide(color: _primaryBlue, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -485,7 +485,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
         borderSide: const BorderSide(color: Colors.red, width: 2),
       ),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: _surfaceColor,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     );
   }
@@ -497,7 +497,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
         vertical: isSmall ? 12 : 14,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surfaceColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _agreeToTerms ? _primaryBlue : const Color(0xFFE2E8F0),
@@ -533,7 +533,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
               'I agree to provide accurate information and accept the Fixora Terms & Conditions',
               style: TextStyle(
                 fontSize: isSmall ? 13 : 14,
-                color: const Color(0xFF0F172A),
+                color: _textColor,
                 height: 1.4,
               ),
             ),
@@ -588,7 +588,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surfaceColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -598,10 +598,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             children: [
               _brandLogo(size: 28),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'Fixora',
                 style: TextStyle(
-                  color: Color(0xFF1E293B),
+                  color: _textColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
@@ -614,7 +614,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: isSmall ? 13 : 14,
-              color: const Color(0xFF64748B),
+              color: _secondaryTextColor,
               height: 1.5,
             ),
           ),
@@ -625,7 +625,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             '© 2025 Fixora Portal. All rights reserved.',
             style: TextStyle(
               fontSize: isSmall ? 12 : 13,
-              color: const Color(0xFF94A3B8),
+              color: _secondaryTextColor,
             ),
           ),
         ],
