@@ -100,7 +100,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           ),
           backgroundColor: Colors.green.shade600,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     } catch (e) {
@@ -116,7 +118,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           ),
           backgroundColor: Colors.red.shade600,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -140,7 +144,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             Expanded(
               child: Text(
                 'Update Status',
-                style: TextStyle(color: _primaryColor, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: _primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -268,15 +275,24 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
-                const SizedBox(height: 24),
-                _buildSummarySection(),
-                const SizedBox(height: 20),
-                _buildSearchAndFilters(),
-                const SizedBox(height: 16),
-                _buildTabBar(),
-                const SizedBox(height: 16),
-                Expanded(child: _buildTabContent()),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeader(),
+                        const SizedBox(height: 24),
+                        _buildSummarySection(),
+                        const SizedBox(height: 20),
+                        _buildSearchAndFilters(),
+                        const SizedBox(height: 16),
+                        _buildTabBar(),
+                        const SizedBox(height: 16),
+                        SizedBox(height: 400, child: _buildTabContent()),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -328,10 +344,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   SizedBox(height: 2),
                   Text(
                     "Manage and resolve citizen complaints",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
               ),
@@ -359,9 +372,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
         final docs = snapshot.data?.docs ?? [];
         final total = docs.length;
-        final pending = docs.where((d) => (d.data()['status'] ?? '') == 'Pending').length;
-        final inProgress = docs.where((d) => (d.data()['status'] ?? '') == 'In Progress').length;
-        final resolved = docs.where((d) => (d.data()['status'] ?? '') == 'Resolved').length;
+        final pending = docs
+            .where((d) => (d.data()['status'] ?? '') == 'Pending')
+            .length;
+        final inProgress = docs
+            .where((d) => (d.data()['status'] ?? '') == 'In Progress')
+            .length;
+        final resolved = docs
+            .where((d) => (d.data()['status'] ?? '') == 'Resolved')
+            .length;
 
         return SummaryGrid(
           total: total,
@@ -382,10 +401,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.search, color: _primaryColor),
             hintText: "Search by ID, title, or citizen email",
-            hintStyle: const TextStyle(
-            color: Colors.black54,
-            fontSize: 14,
-           ),
+            hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
@@ -431,16 +447,21 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     isExpanded: true,
                     icon: Icon(Icons.arrow_drop_down, color: _primaryColor),
                     items: ['All', ..._statuses]
-                        .map((s) => DropdownMenuItem(
-                              value: s,
-                              child: Text(
-                                s,
-                                style: const TextStyle(fontSize: 14 , color: Colors.black87),
-                                
+                        .map(
+                          (s) => DropdownMenuItem(
+                            value: s,
+                            child: Text(
+                              s,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
                               ),
-                            ))
+                            ),
+                          ),
+                        )
                         .toList(),
-                    onChanged: (v) => setState(() => _statusFilter = v ?? 'All'),
+                    onChanged: (v) =>
+                        setState(() => _statusFilter = v ?? 'All'),
                   ),
                 ),
               ),

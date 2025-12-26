@@ -23,6 +23,17 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 4. After successful submission, a success message is shown with the complaint ID and the form is cleared (including unchecking the checkbox).
 5. User can now submit another complaint if needed.
 
+### Admin Dashboard Layout Overflow Fix
+
+- **Fixed RenderFlex Overflow Issue**: Resolved a layout overflow error in the Admin Dashboard where content exceeded available space by 115 pixels.
+  - **Root Cause**: The main Column widget contained multiple children (header, summary section, search/filters, tab bar, and tab content) with fixed heights that combined to exceed screen height.
+  - **Solution Applied**: 
+    - Wrapped the content column in an `Expanded` widget to consume available space.
+    - Added a `SingleChildScrollView` to enable vertical scrolling when content exceeds viewport height.
+    - Set a fixed height (400px) for the tab content area to prevent infinite expansion.
+  - **Implementation Location**: [lib/pages/admin_dashboard/admin_dashboard.dart](lib/pages/admin_dashboard/admin_dashboard.dart) (lines 257-283)
+  - **Result**: Dashboard now scrolls gracefully on smaller screens without overflow errors; the yellow/black warning stripe no longer appears.
+
 ### Previous Work (Earlier Dec 2025)
 
 - Added status and category filters on the Track Complaint page with client-side filtering to avoid Firestore composite index requirements.
