@@ -11,9 +11,9 @@ class TrackComplaintPage extends StatefulWidget {
 }
 
 class _TrackComplaintPageState extends State<TrackComplaintPage> {
-  Color get _primary => const Color(0xFF0D47A1);
-  Color get _accent => const Color(0xFF1A73E8);
-  Color get _bg => const Color(0xFFF4F7FB);
+  Color get _primary => Theme.of(context).colorScheme.primary;
+  Color get _accent => Theme.of(context).colorScheme.secondary;
+  Color get _bg => Theme.of(context).scaffoldBackgroundColor;
 
   String? _selectedCategory;
   String? _selectedStatus;
@@ -182,27 +182,27 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
                       width: menuWidth,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE8ECF0)),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            children: const [
+                            children: [
                               Icon(
                                 Icons.flag_outlined,
-                                color: Color(0xFF64748B),
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
                                 size: 16,
                               ),
-                              SizedBox(width: 6),
+                              const SizedBox(width: 6),
                               Text(
                                 'Status',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF475569),
+                                  color: Theme.of(context).textTheme.bodyMedium?.color,
                                   fontSize: 13,
                                 ),
                               ),
@@ -291,9 +291,9 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
             key: _anchorKey,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE8ECF0)),
+              border: Border.all(color: Theme.of(context).dividerColor),
               boxShadow: [
                 BoxShadow(
                   color: widget.primary.withOpacity(0.06),
@@ -305,22 +305,22 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.flag_outlined,
                   size: 18,
-                  color: Color(0xFF0D47A1),
+                  color: widget.primary,
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'Status',
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF1B2430),
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                     fontSize: 14,
                   ),
                 ),
                 const SizedBox(width: 8),
-                Icon(Icons.arrow_drop_down, color: Colors.grey.shade700),
+                Icon(Icons.arrow_drop_down, color: Theme.of(context).iconTheme.color),
                 if (hasActive) ...[
                   const SizedBox(width: 8),
                   Container(
@@ -411,27 +411,27 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                       width: menuWidth,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE8ECF0)),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            children: const [
+                            children: [
                               Icon(
                                 Icons.category_outlined,
-                                color: Color(0xFF64748B),
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
                                 size: 16,
                               ),
-                              SizedBox(width: 6),
+                              const SizedBox(width: 6),
                               Text(
                                 'Category',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF475569),
+                                  color: Theme.of(context).textTheme.bodyMedium?.color,
                                   fontSize: 13,
                                 ),
                               ),
@@ -547,9 +547,9 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
             key: _anchorKey,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE8ECF0)),
+              border: Border.all(color: Theme.of(context).dividerColor),
               boxShadow: [
                 BoxShadow(
                   color: widget.primary.withOpacity(0.06),
@@ -561,22 +561,22 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.category_outlined,
                   size: 18,
-                  color: Color(0xFF0D47A1),
+                  color: widget.primary,
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'Category',
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF1B2430),
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                     fontSize: 14,
                   ),
                 ),
                 const SizedBox(width: 8),
-                Icon(Icons.arrow_drop_down, color: Colors.grey.shade700),
+                Icon(Icons.arrow_drop_down, color: Theme.of(context).iconTheme.color),
                 if (hasActive) ...[
                   const SizedBox(width: 8),
                   Container(
@@ -640,10 +640,10 @@ class _FilterChip extends StatelessWidget {
                     end: Alignment.bottomRight,
                   )
                 : null,
-            color: isSelected ? null : const Color(0xFFF8FAFC),
+            color: isSelected ? null : Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(25),
             border: Border.all(
-              color: isSelected ? primary : const Color(0xFFE2E8F0),
+              color: isSelected ? primary : Theme.of(context).dividerColor,
               width: isSelected ? 2 : 1.5,
             ),
             boxShadow: isSelected
@@ -663,14 +663,14 @@ class _FilterChip extends StatelessWidget {
                 Icon(
                   icon,
                   size: 14,
-                  color: isSelected ? Colors.white : const Color(0xFF64748B),
+                  color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
                 ),
                 const SizedBox(width: 6),
               ],
               Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF475569),
+                  color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                   letterSpacing: 0.3,
@@ -690,34 +690,35 @@ class _ComplaintsList extends StatelessWidget {
   final String? selectedCategory;
   final String? selectedStatus;
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(String status, bool isDarkMode) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return const Color(0xFFFFEBEE);
+        return isDarkMode ? const Color(0xFF3E2723) : const Color(0xFFFFEBEE);
       case 'in progress':
-        return const Color(0xFFFFF3E0);
+        return isDarkMode ? const Color(0xFF3E2723) : const Color(0xFFFFF3E0); // Adjust for dark mode
       case 'resolved':
-        return const Color(0xFFE7F5ED);
+        return isDarkMode ? const Color(0xFF1B5E20) : const Color(0xFFE7F5ED);
       default:
-        return const Color(0xFFF5F5F5);
+        return isDarkMode ? const Color(0xFF424242) : const Color(0xFFF5F5F5);
     }
   }
 
-  Color _getStatusTextColor(String status) {
+  Color _getStatusTextColor(String status, bool isDarkMode) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return const Color(0xFFD32F2F);
+        return isDarkMode ? const Color(0xFFFFCDD2) : const Color(0xFFD32F2F);
       case 'in progress':
-        return const Color(0xFFCC8A0E);
+        return isDarkMode ? const Color(0xFFFFE0B2) : const Color(0xFFCC8A0E);
       case 'resolved':
-        return const Color(0xFF2E7D32);
+        return isDarkMode ? const Color(0xFFA5D6A7) : const Color(0xFF2E7D32);
       default:
-        return const Color(0xFF666666);
+        return isDarkMode ? const Color(0xFFBDBDBD) : const Color(0xFF666666);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('problems')
@@ -767,8 +768,8 @@ class _ComplaintsList extends StatelessWidget {
           children: complaints.map((doc) {
             final data = doc.data() as Map<String, dynamic>;
             final status = data['status'] ?? 'Pending';
-            final chipColor = _getStatusColor(status);
-            final textColor = _getStatusTextColor(status);
+            final chipColor = _getStatusColor(status, isDarkMode);
+            final textColor = _getStatusTextColor(status, isDarkMode);
 
             return _ComplaintCard(
               data: _ComplaintCardData(
@@ -916,7 +917,7 @@ class _TrackingFormState extends State<_TrackingForm> {
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
@@ -928,8 +929,8 @@ class _TrackingFormState extends State<_TrackingForm> {
             ),
             child: TextField(
               controller: _controller,
-              cursorColor: Colors.black,
-              style: const TextStyle(color: Colors.black),
+              cursorColor: Theme.of(context).textSelectionTheme.cursorColor ?? widget.primary,
+              style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -937,7 +938,7 @@ class _TrackingFormState extends State<_TrackingForm> {
                 ),
                 border: InputBorder.none,
                 hintText: 'Enter Tracking ID (e.g., CG-2024-001234)',
-                hintStyle: const TextStyle(color: Color(0xFF90A4AE)),
+                hintStyle: TextStyle(color: Theme.of(context).hintColor),
                 prefixIcon: Icon(Icons.search, color: widget.primary),
               ),
             ),
@@ -1027,7 +1028,7 @@ class _DemoIds extends StatelessWidget {
           'Try these demo tracking IDs:',
           style: Theme.of(
             context,
-          ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF54606E)),
+          ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).textTheme.bodyMedium?.color),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -1055,7 +1056,7 @@ class _Chip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
@@ -1067,8 +1068,8 @@ class _Chip extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Color(0xFF1B2430),
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyLarge?.color,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -1109,7 +1110,7 @@ class _ComplaintCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -1136,7 +1137,7 @@ class _ComplaintCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF1B2430),
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                       ),
                     ),
@@ -1151,16 +1152,16 @@ class _ComplaintCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   data.id,
-                  style: const TextStyle(
-                    color: Color(0xFF607282),
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   data.category,
-                  style: const TextStyle(
-                    color: Color(0xFF8A99AB),
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1169,7 +1170,7 @@ class _ComplaintCard extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
@@ -1640,7 +1641,7 @@ class _TopBar extends StatelessWidget {
         IconButton(
           onPressed: () {},
           icon: const Icon(Icons.menu),
-          color: const Color(0xFF1B2430),
+          color: Theme.of(context).iconTheme.color,
         ),
       ],
     );
@@ -1661,7 +1662,7 @@ class _Footer extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -1689,45 +1690,45 @@ class _Footer extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       'CivicGrievance',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF1B2430),
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'A transparent and efficient platform for citizens to raise and track civic complaints with Urban Local Bodies.',
-                      style: TextStyle(color: Color(0xFF4F5B6C), height: 1.4),
+                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, height: 1.4),
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
                       'Quick Links',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF1B2430),
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     Text(
                       '• Submit Complaint\n• Track Status\n• Admin Portal',
-                      style: TextStyle(color: Color(0xFF4F5B6C), height: 1.5),
+                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, height: 1.5),
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
                       'Contact',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF1B2430),
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     Text(
                       'Helpline: 1800-XXX-XXXX\nEmail: support@civicgrievance.gov\nMon - Sat: 9AM - 6PM',
-                      style: TextStyle(color: Color(0xFF4F5B6C), height: 1.5),
+                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, height: 1.5),
                     ),
                   ],
                 ),
@@ -1740,7 +1741,7 @@ class _Footer extends StatelessWidget {
           child: Text(
             '© 2025 CivicGrievance Portal. All rights reserved.',
             style: TextStyle(
-              color: const Color(0xFF6D7A8B),
+              color: Theme.of(context).textTheme.bodyMedium?.color,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
