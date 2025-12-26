@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
             '/signup': (context) => const SignupPage(),
             '/login': (context) => const LoginPage(),
             '/': (context) => const BottomNavbarPage(),
+            '/report': (context) => const RaiseIssuePage(),
             '/track': (context) => const TrackComplaintPage(),
             '/profile': (context) => const ProfilePage(),
             // Admin route for direct navigation after admin sign-in/sign-up
