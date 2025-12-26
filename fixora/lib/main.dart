@@ -13,6 +13,8 @@ import 'pages/profile_Info/profile.dart';
 import 'theme/theme_provider.dart';
 import 'pages/track_complaint/track_complaint_page.dart';
 import 'firebase_options.dart';
+import 'widgets/bottom_navbar.dart';
+import 'widgets/admin_bottom_navbar.dart';
 // import 'pages/track_complaint_page.dart';
 
 void main() async {
@@ -45,19 +47,15 @@ class MyApp extends StatelessWidget {
           initialRoute: '/',
           routes: {
             // '/': (context) => const HomePage(),
-            '/': (context) => const AuthGate(),
-            // '/': (context) => const TrackComplaintPage(),
-            // '/': (context) => const DashboardScreen(),
-            // '/': (context) => const AdminDashboardPage(),
-            // '/': (context) => const ProfilePage(),
+            // '/': (context) => const AuthGate(),
             '/signup': (context) => const SignupPage(),
             '/login': (context) => const LoginPage(),
+            '/': (context) => const BottomNavbarPage(),
             '/report': (context) => const RaiseIssuePage(),
-            // '/': (context) => const RaiseIssuePage(),
             '/track': (context) => const TrackComplaintPage(),
             '/profile': (context) => const ProfilePage(),
             // Admin route for direct navigation after admin sign-in/sign-up
-            '/admin': (context) => const AdminDashboardPage(),
+            '/admin': (context) => const AdminBottomNavbarPage(),
             '/dashboard': (context) {
               final args =
                   ModalRoute.of(context)?.settings.arguments
