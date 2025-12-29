@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import '../../widgets/skeleton_loaders.dart';
+import '../../services/notification_service.dart';
 import '../../utils/error_handler.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -235,6 +236,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   OutlinedButton(
                     onPressed: _handleLogout,
                     child: const Text('Logout'),
+                  ),
+
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        await NotificationService.instance.init();
+                        if (mounted) {
+                          ErrorHandler.showSuccess(context, message: 'Notifications enabled');
+                        }
+                      } catch (e) {
+                        if (mounted) ErrorHandler.showError(context, message: 'Could not enable notifications');
+                      }
+                    },
+                    child: const Text('Enable Notifications'),
                   ),
 
                   const SizedBox(height: 16),
