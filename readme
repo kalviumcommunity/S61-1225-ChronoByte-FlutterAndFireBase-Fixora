@@ -1049,3 +1049,30 @@ Manual verification steps
 Notes & Limitations
 - Tokens are stored in `users` documents under `fcmTokens` (an array). The Cloud Function attempts to remove invalid tokens when FCM reports them.
 - This implementation keeps server-side logic minimal; extend recipient selection, topics, custom data payloads as needed.
+
+
+# Real-Time Sync with Firestore
+
+This project demonstrates real-time data synchronization using Cloud Firestore in a Flutter application.
+
+The app listens to live database changes using Firestore snapshot listeners (.snapshots()) and updates the UI instantly with StreamBuilder, without manual refresh.
+
+### Features
+
+Live Firestore updates (add, update, delete)
+
+Reactive UI using StreamBuilder
+
+Automatic state handling (loading, error, empty)
+
+Seamless real-time user experience
+
+### Tech Stack
+
+Flutter
+
+Firebase Cloud Firestore
+
+### Goal
+
+Build a modern, responsive app UI that stays in sync with Firestore in real time.
