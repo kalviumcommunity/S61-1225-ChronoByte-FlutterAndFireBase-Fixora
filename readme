@@ -7,6 +7,126 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 
 ## Recent Work (Dec 2025)
 
+### Error Notification System Implementation
+
+- **Centralized Error Handler Utility**: Implemented a comprehensive error handling system across the entire Fixora app for consistent, user-friendly error notifications.
+  - **ErrorHandler Class**: Created at [lib/utils/error_handler.dart](lib/utils/error_handler.dart) with static methods for different notification types.
+  - **Notification Types**:
+    - `showError()` - Red error notifications with icon and optional title
+    - `showSuccess()` - Green success notifications with checkmark icon
+    - `showWarning()` - Orange warning notifications for non-critical issues
+    - `showInfo()` - Blue info notifications for general information
+    - `showErrorDialog()` - Modal error dialogs for critical issues
+    - `showConfirmDialog()` - Confirmation dialogs for destructive actions
+  - **Smart Error Parsing**: 
+    - `getAuthErrorMessage()` - Converts Firebase Auth exceptions to user-friendly messages
+    - `getFirestoreErrorMessage()` - Parses Firestore errors with context-aware guidance
+    - `getErrorMessage()` - Generic handler that detects exception type automatically
+  - **Visual Features**:
+    - Floating snackbars that slide up from bottom
+    - Theme-aware colors (dark mode support)
+    - Smooth animations with 4-8 second auto-dismiss
+    - Icons and visual hierarchy with title + message structure
+    - Dismissible by swiping up
+
+**Error Messages Handled:**
+
+- **Authentication Errors**: user-not-found, wrong-password, email-already-in-use, weak-password, too-many-requests, etc.
+- **Firestore Errors**: permission-denied, not-found, failed-precondition (index required), network-request-failed, deadline-exceeded, etc.
+- **Network Errors**: Clear messaging for offline/connectivity issues
+- **Validation Errors**: User input validation feedback
+
+**Pages with Error Handling:**
+
+1. **Track Complaint Page** - Shows error state with "Try Again" button when loading fails
+2. **Admin Dashboard** - Summary grid error handling with color-coded messages
+3. **Issues List Component** - Intelligent error display for Firestore index requirements
+4. **Profile Page** - Error handling for profile updates and complaints list loading
+5. **Login Page** - Auth error notifications during sign-in
+6. **Signup Page** - Registration errors with specific guidance (username taken, password weak, etc.)
+7. **Profile Operations** - Logout, update profile, and complaint management error handling
+
+**Error Handling Example:**
+
+```dart
+try {
+  await FirebaseFirestore.instance.collection('problems').add({...});
+  ErrorHandler.showSuccess(context, message: 'Complaint submitted successfully!');
+} catch (e) {
+  ErrorHandler.showError(
+    context,
+    title: 'Submission Failed',
+    message: ErrorHandler.getErrorMessage(e),
+  );
+}
+```
+
+**User Experience Benefits:**
+
+- Clear, non-technical error messages that users understand
+- Consistent visual style across the entire app
+- Helpful guidance for common errors (e.g., Firestore index creation)
+- Different severity levels (error/warning/info) with color coding
+- Auto-dismissing notifications that don't block interaction
+- Mounted state checking to prevent memory leaks
+
+### Skeleton Loaders Implementation
+
+- **Comprehensive Skeleton Loading System**: Implemented animated skeleton loaders across the entire Fixora app to improve perceived performance and user experience during data loading states.
+  - **Shimmer Animation**: Created a base `SkeletonLoader` widget with smooth shimmer animation effect that mimics the actual UI components.
+  - **Reusable Components**: Built multiple specialized skeleton loaders for different UI patterns:
+    - `ComplaintCardSkeleton` - Placeholder for complaint cards with title, status badge, and details
+    - `ProfileSectionSkeleton` - Profile page with avatar and user information placeholders
+    - `AdminDashboardSkeleton` - Summary cards and complaint lists for admin dashboard
+    - `SummaryGridSkeleton` - Statistics grid placeholder with 4 cards
+    - `TrackComplaintSkeleton` - Search bar, filter buttons, and complaint card placeholders
+    - `FormFieldSkeleton` - Input field and label placeholders
+    - `ListItemSkeleton` - Generic list item with avatar and text
+    - `MinimalLoadingSkeleton` - Simple loading indicator with optional message
+  - **Theme-Aware Colors**: All skeleton loaders support light and dark themes with appropriate color schemes.
+  - **Smooth Transitions**: Seamless transition from skeleton loaders to actual content when data loads.
+  - **Implementation Location**: [lib/widgets/skeleton_loaders.dart](lib/widgets/skeleton_loaders.dart)
+
+**Pages Enhanced with Skeleton Loaders:**
+
+1. **Track Complaint Page** - Shows skeleton cards and filters while fetching complaint list from Firestore
+2. **Admin Dashboard**
+   - Summary grid skeleton during stats loading
+   - Complaint list skeleton in issues list component while fetching admin issues
+3. **Profile Page** - Skeleton loaders for complaint history list while fetching user's complaints
+4. **User Dashboard** - Improved loading state indicators during username fetch
+5. **Auth Gate** - Loading skeletons during authentication verification and role checking
+6. **Issues List Component** - Animated skeleton cards while streaming complaint data
+
+**Why Skeleton Loaders Matter:**
+
+- **Better UX**: Provides visual feedback that the app is loading, reducing perceived lag
+- **Professional Appearance**: Skeleton screens are a modern loading pattern used by apps like Facebook, LinkedIn, and Netflix
+- **Context Awareness**: Users see a preview of what's coming, not just a generic spinner
+- **Reduced Bounce Rate**: Users are less likely to think the app is frozen or broken
+- **Animation Smoothness**: Shimmer effect keeps the UI engaging without being distracting
+
+**Code Example:**
+
+To use skeleton loaders in a StreamBuilder:
+```dart
+StreamBuilder<QuerySnapshot>(
+  stream: FirebaseFirestore.instance.collection('problems').snapshots(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return TrackComplaintSkeleton(); // Shows skeleton while loading
+    }
+    
+    if (snapshot.hasError) {
+      return ErrorWidget();
+    }
+    
+    // Actual content displays here when data arrives
+    return ActualContent();
+  },
+)
+```
+
 ### Raise Issue Page Enhancements
 
 - **Added Terms & Conditions Checkbox**: Implemented a styled checkbox field that users must check before submitting a complaint. This ensures users acknowledge and agree to provide accurate information and accept the Fixora Terms & Conditions.

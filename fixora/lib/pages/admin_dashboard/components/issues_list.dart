@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'issue_card.dart';
+import '../../../widgets/skeleton_loaders.dart';
+import '../../../utils/error_handler.dart';
 
 class IssuesList extends StatelessWidget {
   final Stream<QuerySnapshot<Map<String, dynamic>>> stream;
   final bool showActions;
   final String searchQuery;
   final String statusFilter;
-  final void Function(QueryDocumentSnapshot<Map<String, dynamic>> doc, String oldStatus, String newStatus) onStatusSelected;
+  final void Function(
+    QueryDocumentSnapshot<Map<String, dynamic>> doc,
+    String oldStatus,
+    String newStatus,
+  )
+  onStatusSelected;
 
   const IssuesList({
     Key? key,
@@ -25,8 +32,16 @@ class IssuesList extends StatelessWidget {
       stream: stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(strokeWidth: 3),
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            itemCount: 5,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: ComplaintCardSkeleton(
+                baseColor: const Color(0xFFE0E0E0),
+                highlightColor: const Color(0xFFF5F5F5),
+              ),
+            ),
           );
         }
 
@@ -81,60 +96,62 @@ class IssuesList extends StatelessWidget {
   }
 
   Widget _buildErrorWidget(BuildContext context, String error) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final needsIndex = error.contains('requires an index');
-    final isOffline = error.contains('Unable to resolve host') ||
+    final isOffline =
+        error.contains('Unable to resolve host') ||
         error.contains('UNAVAILABLE') ||
         error.contains('UnknownHostException');
 
     String? indexUrl;
     if (needsIndex) {
-      final match = RegExp(r'https://console\.firebase\.google\.com/[^\s)]+').firstMatch(error);
+      final match = RegExp(
+        r'https://console\.firebase\.google\.com/[^\s)]+',
+      ).firstMatch(error);
       if (match != null) indexUrl = match.group(0);
     }
 
-    final message = needsIndex
-        ? 'Query requires a composite index. Create it in Firebase Console.'
-        : (isOffline
-            ? 'Network unavailable. Showing cached data if available.'
-            : 'Firestore query failed: ${error.split('\n').first}');
-
+    final errorMessage = ErrorHandler.getErrorMessage(error);
     final icon = needsIndex
         ? Icons.storage_outlined
         : (isOffline ? Icons.wifi_off_outlined : Icons.error_outline);
+    final bgColor = needsIndex
+        ? Colors.orange
+        : (isOffline ? Colors.blue : Colors.red);
 
     return Column(
       children: [
         Container(
+          margin: const EdgeInsets.all(12),
           padding: const EdgeInsets.all(16),
-          margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.orange.shade50, Colors.orange.shade100],
-            ),
+            color: bgColor.withOpacity(0.15),
+            border: Border.all(color: bgColor.withOpacity(0.5)),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.orange.shade300),
           ),
           child: Row(
             children: [
-              Icon(icon, color: Colors.orange.shade700, size: 28),
+              Icon(icon, color: bgColor, size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      needsIndex ? 'Index Required' : (isOffline ? 'Offline Mode' : 'Error'),
+                      needsIndex
+                          ? 'Index Required'
+                          : (isOffline ? 'Offline Mode' : 'Error'),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: Colors.orange.shade900,
+                        color: bgColor,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      message,
+                      errorMessage,
                       style: TextStyle(
-                        color: Colors.orange.shade800,
+                        color: bgColor.withOpacity(0.8),
                         fontSize: 13,
                       ),
                     ),
@@ -147,7 +164,10 @@ class IssuesList extends StatelessWidget {
                   onPressed: () async {
                     try {
                       final uri = Uri.parse(indexUrl!);
-                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
                     } catch (e) {
                       debugPrint('Failed to open index URL: $e');
                     }
@@ -157,7 +177,10 @@ class IssuesList extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                   ),
                 ),
               ],
@@ -226,10 +249,7 @@ class IssuesList extends StatelessWidget {
             searchQuery.isNotEmpty
                 ? 'Try adjusting your search'
                 : 'Issues will appear here',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
         ],
       ),

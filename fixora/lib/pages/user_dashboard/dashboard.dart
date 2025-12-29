@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../auth/auth_service.dart';
 import '../../theme/theme_provider.dart';
+import '../../widgets/skeleton_loaders.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -46,8 +47,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           title: const Text('Logout'),
           content: const Text('Are you sure you want to logout?'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Logout')),
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Logout'),
+            ),
           ],
         ),
       );
@@ -76,9 +83,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onSelected: _onMenuSelected,
             icon: const Icon(Icons.menu),
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'theme', child: Row(children: [Icon(Icons.brightness_6), SizedBox(width: 10), Text('Toggle Theme')],),),
-              const PopupMenuItem(value: 'profile', child: Row(children: [Icon(Icons.person), SizedBox(width: 10), Text('Profile')],),),
-              const PopupMenuItem(value: 'logout', child: Row(children: [Icon(Icons.logout), SizedBox(width: 10), Text('Logout')],),),
+              const PopupMenuItem(
+                value: 'theme',
+                child: Row(
+                  children: [
+                    Icon(Icons.brightness_6),
+                    SizedBox(width: 10),
+                    Text('Toggle Theme'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.person),
+                    SizedBox(width: 10),
+                    Text('Profile'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout),
+                    SizedBox(width: 10),
+                    Text('Logout'),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
@@ -91,9 +125,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             // Greeting
             if (_loadingUsername)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(children: [CircularProgressIndicator(), SizedBox(width: 12), Text('Loading...')]),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text('Loading...'),
+                  ],
+                ),
               )
             else
               Padding(
@@ -102,7 +147,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   _username != null && _username!.isNotEmpty
                       ? 'Welcome back, ${_username!}'
                       : 'Hello',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
 
@@ -115,7 +162,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Container(
               height: 45,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.06),
+                color: Theme.of(
+                  context,
+                ).colorScheme.secondary.withOpacity(0.06),
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
@@ -170,7 +219,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Text(
                   'No Image',
                   style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.color?.withOpacity(0.7),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),

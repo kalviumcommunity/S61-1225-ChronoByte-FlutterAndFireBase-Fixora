@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../widgets/skeleton_loaders.dart';
+import '../../utils/error_handler.dart';
 
 class TrackComplaintPage extends StatefulWidget {
   const TrackComplaintPage({super.key});
@@ -184,7 +186,9 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        border: Border.all(
+                          color: Theme.of(context).dividerColor,
+                        ),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -194,7 +198,9 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
                             children: [
                               Icon(
                                 Icons.flag_outlined,
-                                color: Theme.of(context).textTheme.bodyMedium?.color,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.color,
                                 size: 16,
                               ),
                               const SizedBox(width: 6),
@@ -202,7 +208,9 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
                                 'Status',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.color,
                                   fontSize: 13,
                                 ),
                               ),
@@ -305,11 +313,7 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.flag_outlined,
-                  size: 18,
-                  color: widget.primary,
-                ),
+                Icon(Icons.flag_outlined, size: 18, color: widget.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Status',
@@ -320,7 +324,10 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Icon(Icons.arrow_drop_down, color: Theme.of(context).iconTheme.color),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Theme.of(context).iconTheme.color,
+                ),
                 if (hasActive) ...[
                   const SizedBox(width: 8),
                   Container(
@@ -413,7 +420,9 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        border: Border.all(
+                          color: Theme.of(context).dividerColor,
+                        ),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -423,7 +432,9 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                             children: [
                               Icon(
                                 Icons.category_outlined,
-                                color: Theme.of(context).textTheme.bodyMedium?.color,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.color,
                                 size: 16,
                               ),
                               const SizedBox(width: 6),
@@ -431,7 +442,9 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                                 'Category',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.color,
                                   fontSize: 13,
                                 ),
                               ),
@@ -561,11 +574,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.category_outlined,
-                  size: 18,
-                  color: widget.primary,
-                ),
+                Icon(Icons.category_outlined, size: 18, color: widget.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Category',
@@ -576,7 +585,10 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Icon(Icons.arrow_drop_down, color: Theme.of(context).iconTheme.color),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Theme.of(context).iconTheme.color,
+                ),
                 if (hasActive) ...[
                   const SizedBox(width: 8),
                   Container(
@@ -663,14 +675,18 @@ class _FilterChip extends StatelessWidget {
                 Icon(
                   icon,
                   size: 14,
-                  color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).textTheme.bodyMedium?.color,
                 ),
                 const SizedBox(width: 6),
               ],
               Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).textTheme.bodyMedium?.color,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                   letterSpacing: 0.3,
@@ -695,7 +711,9 @@ class _ComplaintsList extends StatelessWidget {
       case 'pending':
         return isDarkMode ? const Color(0xFF3E2723) : const Color(0xFFFFEBEE);
       case 'in progress':
-        return isDarkMode ? const Color(0xFF3E2723) : const Color(0xFFFFF3E0); // Adjust for dark mode
+        return isDarkMode
+            ? const Color(0xFF3E2723)
+            : const Color(0xFFFFF3E0); // Adjust for dark mode
       case 'resolved':
         return isDarkMode ? const Color(0xFF1B5E20) : const Color(0xFFE7F5ED);
       default:
@@ -727,11 +745,49 @@ class _ComplaintsList extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return TrackComplaintSkeleton(
+            baseColor: isDarkMode
+                ? const Color(0xFF2A2A2A)
+                : const Color(0xFFE0E0E0),
+            highlightColor: isDarkMode
+                ? const Color(0xFF3A3A3A)
+                : const Color(0xFFF5F5F5),
+          );
         }
 
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Failed to Load Complaints',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    ErrorHandler.getErrorMessage(snapshot.error!),
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // The StreamBuilder will automatically retry on rebuild
+                      // This is handled by the parent widget's refresh mechanism
+                    },
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Try Again'),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -929,8 +985,12 @@ class _TrackingFormState extends State<_TrackingForm> {
             ),
             child: TextField(
               controller: _controller,
-              cursorColor: Theme.of(context).textSelectionTheme.cursorColor ?? widget.primary,
-              style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+              cursorColor:
+                  Theme.of(context).textSelectionTheme.cursorColor ??
+                  widget.primary,
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -1026,9 +1086,9 @@ class _DemoIds extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           'Try these demo tracking IDs:',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).textTheme.bodyMedium?.color),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+          ),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -1137,7 +1197,9 @@ class _ComplaintCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.color,
                             ),
                       ),
                     ),
@@ -1702,7 +1764,10 @@ class _Footer extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       'A transparent and efficient platform for citizens to raise and track civic complaints with Urban Local Bodies.',
-                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, height: 1.4),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                        height: 1.4,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -1715,7 +1780,10 @@ class _Footer extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       '• Submit Complaint\n• Track Status\n• Admin Portal',
-                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, height: 1.5),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                        height: 1.5,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -1728,7 +1796,10 @@ class _Footer extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       'Helpline: 1800-XXX-XXXX\nEmail: support@civicgrievance.gov\nMon - Sat: 9AM - 6PM',
-                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, height: 1.5),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                        height: 1.5,
+                      ),
                     ),
                   ],
                 ),

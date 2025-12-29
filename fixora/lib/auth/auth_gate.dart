@@ -6,6 +6,7 @@ import 'auth_service.dart';
 import '../pages/landing_page/landing.dart';
 import '../pages/user_dashboard/dashboard.dart';
 import '../pages/admin_dashboard/admin_dashboard.dart';
+import '../widgets/skeleton_loaders.dart';
 
 /// Simple AuthGate that listens to `authStateChanges` and returns
 /// - [LandingPage] when the user is not signed in
@@ -21,8 +22,13 @@ class AuthGate extends StatelessWidget {
       stream: AuthService.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return Scaffold(
+            body: Center(
+              child: MinimalLoadingSkeleton(
+                message: 'Initializing...',
+                primaryColor: Theme.of(context).colorScheme.primary,
+              ),
+            ),
           );
         }
 
@@ -39,30 +45,47 @@ class AuthGate extends StatelessWidget {
 
         // Fetch users doc to check role; fallback to email domain check
         return FutureBuilder(
-          future: FirebaseFirestore.instance.collection('users').doc(user.uid).get(),
+          future: FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get(),
           builder: (context, userSnap) {
             if (userSnap.connectionState == ConnectionState.waiting) {
-              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+              return Scaffold(
+                body: Center(
+                  child: MinimalLoadingSkeleton(
+                    message: 'Verifying access...',
+                    primaryColor: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              );
             }
             if (userSnap.hasError) {
               // If fetching user doc fails, fallback to domain check
               final email = user.email ?? '';
-              final isAdminDom = email.toLowerCase().endsWith('@fixoradmin.com');
+              final isAdminDom = email.toLowerCase().endsWith(
+                '@fixoradmin.com',
+              );
               if (isAdminDom) return const AdminDashboardPage();
               return const DashboardScreen();
             }
 
-            final doc = userSnap.data as DocumentSnapshot<Map<String, dynamic>>?;
+            final doc =
+                userSnap.data as DocumentSnapshot<Map<String, dynamic>>?;
             final role = doc?.data()?['role'] as String?;
             final email = user.email ?? '';
-            final isAdmin = (role == 'admin') || email.toLowerCase().endsWith('@fixoradmin.com');
+            final isAdmin =
+                (role == 'admin') ||
+                email.toLowerCase().endsWith('@fixoradmin.com');
 
             // Debug logging for admin detection
             // Prints will appear in the debug console when running the app
             // Example output: "AuthGate: user=user@fixoradmin.com, role=admin, isAdmin=true"
             try {
               // ignore: avoid_print
-              print('AuthGate: user=${user.email}, role=$role, isAdmin=$isAdmin');
+              print(
+                'AuthGate: user=${user.email}, role=$role, isAdmin=$isAdmin',
+              );
             } catch (_) {}
 
             if (isAdmin) return const AdminDashboardPage();
