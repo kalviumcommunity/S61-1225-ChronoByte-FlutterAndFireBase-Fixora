@@ -1009,3 +1009,43 @@ A toggle (Settings or AppBar) allows users to switch themes
 
 Run the app and use the theme toggle to change between Light and Dark modes.
 The app remembers your choice on the next launch.
+
+
+## Push Notifications (FCM) — Implementation notes
+
+This project now includes FCM support and a Cloud Functions implementation to send notifications on complaint create and status change.
+
+What was added
+- Flutter packages: `firebase_messaging`, `flutter_local_notifications`
+- `lib/services/notification_service.dart` — initializes FCM, saves tokens to `users` doc (`fcmTokens`), and shows foreground notifications.
+- `functions/` — Cloud Functions (`onProblemCreate`, `onProblemUpdate`) that send notifications to admins (on create) and the complaint owner (on status change).
+
+Setup & Deployment
+1. Ensure your Firebase project has Cloud Messaging enabled (default).
+2. From the `functions/` folder:
+   - `npm install`
+   - `firebase deploy --only functions`
+
+Android
+- For Android 13+ you must request POST_NOTIFICATIONS permission at runtime. Consider adding `permission_handler` or request via platform channels.
+- Ensure an appropriate notification icon is available (we use `@mipmap/ic_launcher` by default).
+
+iOS
+- Add `FirebaseAppDelegateProxyEnabled` & relevant push entitlements and `aps-environment` in your Xcode project.
+- Request notification permissions (the app asks on first run).
+
+Testing
+- Create a complaint (app) → admins should receive a notification (verify on a device signed in as admin).
+- Change a complaint status (Admin UI) → complaint owner should receive a notification (verify on a device signed in as the complaint owner).
+
+Manual verification steps
+1. On a test device, sign in as an admin account and ensure notifications are enabled (open Profile → Enable Notifications).
+2. Deploy cloud functions: `cd functions && npm install && firebase deploy --only functions`.
+3. From another device, create a complaint using the app.
+4. The admin device should receive a push notification; check server logs in the Firebase Console if it doesn't.
+5. From admin UI change the status to "In Progress" or "Resolved" and verify the complaint owner receives a notification.
+6. Check `users/{uid}` doc to see `fcmTokens` array updated when the user enables notifications or signs in.
+
+Notes & Limitations
+- Tokens are stored in `users` documents under `fcmTokens` (an array). The Cloud Function attempts to remove invalid tokens when FCM reports them.
+- This implementation keeps server-side logic minimal; extend recipient selection, topics, custom data payloads as needed.

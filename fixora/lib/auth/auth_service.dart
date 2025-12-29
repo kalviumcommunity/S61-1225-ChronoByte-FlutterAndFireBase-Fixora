@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import '../services/notification_service.dart';
 
 class AuthService {
   AuthService._privateConstructor();
@@ -86,5 +88,14 @@ class AuthService {
     return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
-  Future<void> signOut() => _auth.signOut();
+  Future<void> signOut() async {
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) await NotificationService.instance.removeTokenFromFirestore(token);
+    } catch (e) {
+      // ignore
+    }
+
+    return _auth.signOut();
+  }
 }

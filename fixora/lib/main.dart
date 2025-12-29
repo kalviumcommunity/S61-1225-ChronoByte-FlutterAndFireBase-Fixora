@@ -5,6 +5,7 @@ import 'auth/signup_page.dart';
 import 'widgets/user_dashboard.dart';
 import 'pages/landing_page/landing.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'services/notification_service.dart';
 import 'auth/auth_gate.dart';
 import 'pages/raise_issue/raise_issue_page.dart';
 import 'pages/user_dashboard/dashboard.dart';
@@ -22,6 +23,13 @@ void main() async {
 
   // Initialize Firebase using centralized options
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize notifications (FCM + local notifications)
+  try {
+    await NotificationService.instance.init();
+  } catch (e) {
+    // If notification init fails, app should still run
+  }
 
   runApp(
     ChangeNotifierProvider(
