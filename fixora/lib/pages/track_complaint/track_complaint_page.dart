@@ -726,7 +726,7 @@ class _ComplaintsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    return StreamBuilder<QuerySnapshot>(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('problems')
           .orderBy('createdAt', descending: true)
@@ -793,7 +793,7 @@ class _ComplaintsList extends StatelessWidget {
 
         // Filter complaints client-side to avoid composite index requirement
         var complaints = snapshot.data!.docs.where((doc) {
-          final data = doc.data() as Map<String, dynamic>;
+          final data = doc.data();
 
           // Apply category filter
           if (selectedCategory != null &&
@@ -811,7 +811,7 @@ class _ComplaintsList extends StatelessWidget {
 
         return Column(
           children: complaints.map((doc) {
-            final data = doc.data() as Map<String, dynamic>;
+            final data = doc.data();
             final status = data['status'] ?? 'Pending';
             final chipColor = _getStatusColor(status, isDarkMode);
             final textColor = _getStatusTextColor(status, isDarkMode);
@@ -987,8 +987,7 @@ class _TrackingFormState extends State<_TrackingForm> {
                     );
                   }
                 } else {
-                  final data =
-                      snapshot.docs.first.data() as Map<String, dynamic>;
+                  final data = snapshot.docs.first.data();
                   final status = data['status'] ?? 'Unknown';
                   final category = data['category'] ?? 'Uncategorized';
                   if (context.mounted) {

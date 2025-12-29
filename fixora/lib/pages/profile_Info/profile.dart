@@ -91,8 +91,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _showEditDialog(DocumentSnapshot doc) async {
-    final data = doc.data() as Map<String, dynamic>;
+  Future<void> _showEditDialog(QueryDocumentSnapshot<Map<String, dynamic>> doc) async {
+    final data = doc.data();
     final TextEditingController descCtrl = TextEditingController(
       text: data['description'] ?? '',
     );
@@ -148,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _confirmDelete(DocumentSnapshot doc) async {
+  Future<void> _confirmDelete(QueryDocumentSnapshot<Map<String, dynamic>> doc) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -252,155 +252,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                     child: const Text('Enable Notifications'),
                   ),
-
-                  const SizedBox(height: 16),
-                  // Auth debug card: shows ID token claims and allows refresh
-                  Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Auth Info',
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              TextButton(
-                                onPressed: () async {
-                                  // Force token refresh
-                                  try {
-                                    await user?.getIdTokenResult(true);
-                                    setState(() {});
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Token refreshed'),
-                                      ),
-                                    );
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Error refreshing token: $e',
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: const Text('Refresh'),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          FutureBuilder<IdTokenResult?>(
-                            future: user?.getIdTokenResult(false),
-                            builder: (context, tokSnap) {
-                              if (tokSnap.connectionState ==
-                                  ConnectionState.waiting) {
-                                return SizedBox(
-                                  height: 40,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Theme.of(context).colorScheme.primary,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                              if (tokSnap.hasError)
-                                return Text(
-                                  'Error getting token: ${tokSnap.error}',
-                                );
-                              final claims = tokSnap.data?.claims ?? {};
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'UID: ${user?.uid ?? '-'}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    'Email: ${user?.email ?? '-'}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Claims:',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  if (claims.isEmpty)
-                                    const Text('No custom claims detected'),
-                                  if (claims.isNotEmpty) ...[
-                                    for (final entry in claims.entries)
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 4,
-                                        ),
-                                        child: Text(
-                                          '${entry.key}: ${entry.value}',
-                                        ),
-                                      ),
-                                  ],
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          final text =
-                                              'uid=${user?.uid}\nemail=${user?.email}\nclaims=${claims.toString()}';
-                                          Clipboard.setData(
-                                            ClipboardData(text: text),
-                                          );
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Auth info copied to clipboard',
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: const Text('Copy'),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      OutlinedButton(
-                                        onPressed: () async {
-                                          // open login page for re-auth
-                                          await Navigator.pushNamed(
-                                            context,
-                                            '/login',
-                                          );
-                                        },
-                                        child: const Text('Re-auth / Login'),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
                   const SizedBox(height: 24),
                   Text(
                     'Raised Complaints',
@@ -410,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 12),
 
-                  StreamBuilder<QuerySnapshot>(
+                  StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                     // NOTE: Avoid server-side composite index requirement by not ordering in the query.
                     // We'll fetch complaints filtered by userId and sort them client-side by 'createdAt'.
                     stream: FirebaseFirestore.instance
@@ -521,14 +372,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       }
 
-                      final docs = List<DocumentSnapshot>.from(
+                      final docs = List<QueryDocumentSnapshot<Map<String, dynamic>>>.from(
                         snapshot.data?.docs ?? [],
                       );
 
                       // Sort locally by createdAt (descending)
                       docs.sort((a, b) {
-                        final aData = a.data() as Map<String, dynamic>?;
-                        final bData = b.data() as Map<String, dynamic>?;
+                        final aData = a.data();
+                        final bData = b.data();
                         final aTs = aData?['createdAt'];
                         final bTs = bData?['createdAt'];
 
@@ -559,7 +410,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                       return Column(
                         children: docs.map((doc) {
-                          final data = doc.data() as Map<String, dynamic>;
+                          final data = doc.data();
                           final status = data['status'] ?? 'Pending';
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8),
