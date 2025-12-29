@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_service.dart';
 import '../widgets/auth_widgets.dart';
 import '../widgets/theme_toggle_button.dart';
+import '../utils/error_handler.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,6 +36,9 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       final user = FirebaseAuth.instance.currentUser;
       final email = user?.email?.toLowerCase() ?? '';
+
+      ErrorHandler.showSuccess(context, message: 'Login successful!');
+
       if (email.endsWith('@fixoradmin.com')) {
         Navigator.pushNamedAndRemoveUntil(context, '/admin', (r) => false);
       } else {
@@ -43,9 +47,11 @@ class _LoginPageState extends State<LoginPage> {
       }
     } on Exception catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
+      ErrorHandler.showError(
         context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+        title: 'Login Failed',
+        message: ErrorHandler.getErrorMessage(e),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }

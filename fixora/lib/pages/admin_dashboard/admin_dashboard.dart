@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fixora/pages/admin_dashboard/components/summary_grid.dart';
 import 'package:fixora/pages/admin_dashboard/components/issues_list.dart';
+import '../../widgets/skeleton_loaders.dart';
+import '../../utils/error_handler.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({Key? key}) : super(key: key);
@@ -360,13 +362,36 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       stream: _allStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(strokeWidth: 3));
+          return SummaryGridSkeleton(
+            baseColor: const Color(0xFFE0E0E0),
+            highlightColor: const Color(0xFFF5F5F5),
+          );
         }
 
         if (snapshot.hasError) {
-          return Text(
-            'Error loading summary: ${snapshot.error}',
-            style: const TextStyle(color: Colors.red),
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.warning_outlined,
+                  color: Colors.orange,
+                  size: 40,
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Unable to Load Summary',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  ErrorHandler.getErrorMessage(snapshot.error!),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
           );
         }
 

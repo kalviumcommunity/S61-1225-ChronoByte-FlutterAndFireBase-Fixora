@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'auth_service.dart';
 import '../widgets/auth_widgets.dart';
 import '../widgets/theme_toggle_button.dart';
+import '../utils/error_handler.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -35,9 +36,11 @@ class _SignupPageState extends State<SignupPage> {
       );
       if (usernameExists) {
         if (!mounted) return;
-        ScaffoldMessenger.of(
+        ErrorHandler.showWarning(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Username already taken')));
+          title: 'Username Unavailable',
+          message: 'This username is already taken. Please choose another.',
+        );
         setState(() => _loading = false);
         return;
       }
@@ -49,6 +52,12 @@ class _SignupPageState extends State<SignupPage> {
       );
       if (!mounted) return;
       final email = _emailCtl.text.trim().toLowerCase();
+
+      ErrorHandler.showSuccess(
+        context,
+        message: 'Account created successfully!',
+      );
+
       if (email.endsWith('@fixoradmin.com')) {
         Navigator.pushNamedAndRemoveUntil(context, '/admin', (r) => false);
       } else {
@@ -57,9 +66,11 @@ class _SignupPageState extends State<SignupPage> {
       }
     } on Exception catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
+      ErrorHandler.showError(
         context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+        title: 'Registration Failed',
+        message: ErrorHandler.getErrorMessage(e),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }
