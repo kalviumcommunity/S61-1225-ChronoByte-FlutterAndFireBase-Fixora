@@ -7,6 +7,113 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 
 ## Recent Work (Dec 2025)
 
+### UI Refinements (Dec 29, 2025)
+
+- **Track Complaint Page Visual Updates**: Made design improvements to enhance the user interface of the Track Complaint page.
+  
+  - **Title Color Changed to White**: Updated the "Track Your Complaint" heading color from dark gray (`Color(0xFF1B2430)`) to white (`Colors.white`) for better contrast and visibility, especially on dark or gradient backgrounds.
+  
+  - **Removed Debug Button**: Cleaned up the UI by removing the "Create Sample Complaint (Debug)" button that was visible in debug mode. The button served as a testing utility but cluttered the production interface.
+    - Implementation: Modified `_CreateDemoButton` widget to return `SizedBox.shrink()` instead of the actual button
+    - Location: [lib/pages/track_complaint/track_complaint_page.dart](lib/pages/track_complaint/track_complaint_page.dart)
+
+**Visual Impact:**
+
+-  **Cleaner Interface**: Removed development-only UI elements from user-facing pages
+-  **Better Readability**: White text on colored backgrounds provides superior contrast
+-  **Professional Appearance**: Debug utilities hidden from end users
+-  **Consistent Design**: Title color matches modern app design patterns
+
+### Prop Drilling Elimination (Dec 29, 2025)
+
+- **Removed Prop Drilling from Track Complaint Page**: Refactored the entire [lib/pages/track_complaint/track_complaint_page.dart](lib/pages/track_complaint/track_complaint_page.dart) to eliminate unnecessary prop drilling of theme colors through component hierarchy.
+  
+  - **Problem Identified**: Colors (`primary`, `accent`, `backgroundColor`) were being passed as props through multiple widget layers, creating tight coupling and verbose component APIs.
+  
+  - **Solution Implemented**:
+    - Removed color getter properties from parent `_TrackComplaintPageState` class
+    - Eliminated color parameters from all child widgets: `_TopBar`, `_HeroSection`, `_DemoIds`, `_StatusFilterButton`, `_CategoryFilterButton`, `_Footer`, `_TrackingForm`
+    - Added color getters directly in stateful widget state classes (`_StatusFilterButtonState`, `_CategoryFilterButtonState`) to access theme colors without drilling
+    - Each widget now accesses `Theme.of(context).colorScheme.primary/secondary` directly instead of receiving colors as parameters
+  
+  - **Widgets Refactored**:
+    - `_TopBar` - removed `primary` prop
+    - `_HeroSection` - removed `primary` and `accent` props
+    - `_DemoIds` - removed `accent` prop
+    - `_StatusFilterButton` - removed `primary` and `accent` props, added color getters
+    - `_CategoryFilterButton` - removed `primary` and `accent` props, added color getters
+    - `_Footer` - removed `primary` and `accent` props
+    - `_TrackingForm` - removed `primary` and `accent` props
+
+**Benefits Achieved:**
+
+-  **Cleaner Component APIs**: Reduced parameter count in widget constructors
+-  **Better Maintainability**: Theme changes automatically propagate without manual prop updates
+-  **Follows Flutter Best Practices**: Direct theme access instead of manual color passing
+-  **Reduced Code Verbosity**: Eliminated repetitive color prop declarations and passing
+-  **Improved Scalability**: New widgets can access theme directly without prop chains
+-  **Type Safety**: Compiler enforces theme color access patterns
+
+**Code Example - Before:**
+
+```dart
+// Parent passing colors to child
+_TopBar(primary: _primary)
+
+// Child receiving colors as props
+class _TopBar extends StatelessWidget {
+  const _TopBar({required this.primary});
+  final Color primary;
+  
+  Widget build(BuildContext context) {
+    return CircleAvatar(backgroundColor: primary, ...);
+  }
+}
+```
+
+**Code Example - After:**
+
+```dart
+// Parent - no color props needed
+const _TopBar()
+
+// Child accessing theme directly
+class _TopBar extends StatelessWidget {
+  const _TopBar();
+  
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    return CircleAvatar(backgroundColor: primary, ...);
+  }
+}
+```
+
+**For Stateful Widgets with Callbacks:**
+
+```dart
+// Using getters in State class for access across methods
+class _StatusFilterButtonState extends State<_StatusFilterButton> {
+  Color get primary => Theme.of(context).colorScheme.primary;
+  Color get accent => Theme.of(context).colorScheme.secondary;
+  
+  void _showMenu() {
+    // Can now use primary/accent in any method
+    BoxDecoration(color: primary.withOpacity(0.08), ...)
+  }
+  
+  Widget build(BuildContext context) {
+    // Also available in build method
+    Icon(Icons.flag_outlined, color: primary)
+  }
+}
+```
+
+**Technical Notes:**
+
+- Color getters were added to State classes instead of build() local variables to ensure colors are accessible across all methods (like `_showMenu()`, `_hideMenu()`, etc.)
+- No performance impact as `Theme.of(context)` lookups are optimized by Flutter's InheritedWidget mechanism
+- All widgets remain responsive to theme changes (light/dark mode switching)
+
 ### Error Notification System Implementation
 
 - **Centralized Error Handler Utility**: Implemented a comprehensive error handling system across the entire Fixora app for consistent, user-friendly error notifications.

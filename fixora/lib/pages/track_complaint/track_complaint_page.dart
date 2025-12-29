@@ -13,10 +13,6 @@ class TrackComplaintPage extends StatefulWidget {
 }
 
 class _TrackComplaintPageState extends State<TrackComplaintPage> {
-  Color get _primary => Theme.of(context).colorScheme.primary;
-  Color get _accent => Theme.of(context).colorScheme.secondary;
-  Color get _bg => Theme.of(context).scaffoldBackgroundColor;
-
   String? _selectedCategory;
   String? _selectedStatus;
 
@@ -30,7 +26,7 @@ class _TrackComplaintPageState extends State<TrackComplaintPage> {
     // Seed only in debug mode to avoid production test data
     if (!kDebugMode) return;
 
-    const complaintId = 'CG-2025-001234';
+    const complaintId = 'FX-2025-001234';
     try {
       final existing = await FirebaseFirestore.instance
           .collection('problems')
@@ -59,18 +55,17 @@ class _TrackComplaintPageState extends State<TrackComplaintPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _TopBar(primary: _primary),
+              const _TopBar(),
               const SizedBox(height: 26),
-              _HeroSection(primary: _primary, accent: _accent),
+              const _HeroSection(),
               const SizedBox(height: 24),
-              _DemoIds(accent: _primary),
+              const _DemoIds(),
               const SizedBox(height: 12),
               const _CreateDemoButton(),
               const SizedBox(height: 30),
@@ -91,8 +86,6 @@ class _TrackComplaintPageState extends State<TrackComplaintPage> {
                         _selectedStatus = status;
                       });
                     },
-                    primary: _primary,
-                    accent: _accent,
                   ),
                   const SizedBox(width: 10),
                   _CategoryFilterButton(
@@ -102,8 +95,6 @@ class _TrackComplaintPageState extends State<TrackComplaintPage> {
                         _selectedCategory = category;
                       });
                     },
-                    primary: _primary,
-                    accent: _accent,
                   ),
                 ],
               ),
@@ -113,7 +104,7 @@ class _TrackComplaintPageState extends State<TrackComplaintPage> {
                 selectedStatus: _selectedStatus,
               ),
               const SizedBox(height: 28),
-              _Footer(primary: _primary, accent: _accent),
+              const _Footer(),
             ],
           ),
         ),
@@ -126,14 +117,10 @@ class _StatusFilterButton extends StatefulWidget {
   const _StatusFilterButton({
     required this.selectedStatus,
     required this.onStatusChanged,
-    required this.primary,
-    required this.accent,
   });
 
   final String? selectedStatus;
   final Function(String?) onStatusChanged;
-  final Color primary;
-  final Color accent;
 
   @override
   State<_StatusFilterButton> createState() => _StatusFilterButtonState();
@@ -144,6 +131,9 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
   OverlayEntry? _entry;
   bool _menuOpen = false;
   final GlobalKey _anchorKey = GlobalKey();
+
+  Color get primary => Theme.of(context).colorScheme.primary;
+  Color get accent => Theme.of(context).colorScheme.secondary;
 
   void _showMenu() {
     if (_menuOpen) return;
@@ -229,7 +219,7 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
                                   widget.onStatusChanged(null);
                                   _hideMenu();
                                 },
-                                primary: widget.primary,
+                                primary: Theme.of(context).colorScheme.primary,
                               ),
                               _FilterChip(
                                 label: 'Pending',
@@ -304,7 +294,7 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
               border: Border.all(color: Theme.of(context).dividerColor),
               boxShadow: [
                 BoxShadow(
-                  color: widget.primary.withOpacity(0.06),
+                  color: primary.withOpacity(0.06),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -313,7 +303,7 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.flag_outlined, size: 18, color: widget.primary),
+                Icon(Icons.flag_outlined, size: 18, color: primary),
                 const SizedBox(width: 8),
                 Text(
                   'Status',
@@ -336,7 +326,7 @@ class _StatusFilterButtonState extends State<_StatusFilterButton> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: widget.accent.withOpacity(0.12),
+                      color: accent.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
@@ -362,14 +352,10 @@ class _CategoryFilterButton extends StatefulWidget {
   const _CategoryFilterButton({
     required this.selectedCategory,
     required this.onCategoryChanged,
-    required this.primary,
-    required this.accent,
   });
 
   final String? selectedCategory;
   final Function(String?) onCategoryChanged;
-  final Color primary;
-  final Color accent;
 
   @override
   State<_CategoryFilterButton> createState() => _CategoryFilterButtonState();
@@ -380,6 +366,9 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
   OverlayEntry? _entry;
   bool _menuOpen = false;
   final GlobalKey _anchorKey = GlobalKey();
+
+  Color get primary => Theme.of(context).colorScheme.primary;
+  Color get accent => Theme.of(context).colorScheme.secondary;
 
   void _showMenu() {
     if (_menuOpen) return;
@@ -463,7 +452,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                                   widget.onCategoryChanged(null);
                                   _hideMenu();
                                 },
-                                primary: widget.primary,
+                                primary: primary,
                               ),
                               _FilterChip(
                                 label: 'Road & Transport',
@@ -477,7 +466,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                                   );
                                   _hideMenu();
                                 },
-                                primary: widget.primary,
+                                primary: primary,
                               ),
                               _FilterChip(
                                 label: 'Waste',
@@ -489,7 +478,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                                   widget.onCategoryChanged('Waste Management');
                                   _hideMenu();
                                 },
-                                primary: widget.primary,
+                                primary: primary,
                               ),
                               _FilterChip(
                                 label: 'Water',
@@ -500,7 +489,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                                   widget.onCategoryChanged('Water Supply');
                                   _hideMenu();
                                 },
-                                primary: widget.primary,
+                                primary: primary,
                               ),
                               _FilterChip(
                                 label: 'Electricity',
@@ -511,7 +500,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                                   widget.onCategoryChanged('Electricity');
                                   _hideMenu();
                                 },
-                                primary: widget.primary,
+                                primary: primary,
                               ),
                               _FilterChip(
                                 label: 'Others',
@@ -521,7 +510,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                                   widget.onCategoryChanged('Others');
                                   _hideMenu();
                                 },
-                                primary: widget.primary,
+                                primary: primary,
                               ),
                             ],
                           ),
@@ -565,7 +554,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
               border: Border.all(color: Theme.of(context).dividerColor),
               boxShadow: [
                 BoxShadow(
-                  color: widget.primary.withOpacity(0.06),
+                  color: primary.withOpacity(0.06),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -574,7 +563,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.category_outlined, size: 18, color: widget.primary),
+                Icon(Icons.category_outlined, size: 18, color: primary),
                 const SizedBox(width: 8),
                 Text(
                   'Category',
@@ -597,7 +586,7 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: widget.accent.withOpacity(0.12),
+                      color: accent.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
@@ -830,7 +819,7 @@ class _ComplaintsList extends StatelessWidget {
             return _ComplaintCard(
               data: _ComplaintCardData(
                 title: data['issue'] ?? 'Unknown Issue',
-                id: data['complaintId'] ?? 'CG-XXXXXX',
+                id: data['complaintId'] ?? 'FX-XXXXXX',
                 category: data['category'] ?? 'Uncategorized',
                 status: status,
                 chipColor: chipColor,
@@ -861,55 +850,17 @@ class _CreateDemoButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!kDebugMode) return const SizedBox.shrink();
-
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return const SizedBox.shrink();
-    }
-
-    return Align(
-      alignment: Alignment.center,
-      child: OutlinedButton.icon(
-        icon: const Icon(Icons.add),
-        label: const Text('Create Sample Complaint (Debug)'),
-        onPressed: () async {
-          final now = DateTime.now();
-          final year = now.year;
-          final random = DateTime.now().millisecondsSinceEpoch % 1000000;
-          final complaintId = 'CG-$year-${random.toString().padLeft(6, '0')}';
-
-          await FirebaseFirestore.instance.collection('problems').doc().set({
-            'complaintId': complaintId,
-            'userId': user.uid,
-            'category': 'Waste Management',
-            'issue': 'Garbage Overflow',
-            'description':
-                'Sample complaint created for testing via Track page.',
-            'location': 'N/A',
-            'status': 'Pending',
-            'createdAt': FieldValue.serverTimestamp(),
-          });
-
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Sample complaint created: $complaintId')),
-            );
-          }
-        },
-      ),
-    );
+    return const SizedBox.shrink();
   }
 }
 
 class _HeroSection extends StatelessWidget {
-  const _HeroSection({required this.primary, required this.accent});
-
-  final Color primary;
-  final Color accent;
+  const _HeroSection();
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final accent = Theme.of(context).colorScheme.secondary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -928,7 +879,7 @@ class _HeroSection extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w800,
-            color: const Color(0xFF1B2430),
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 10),
@@ -941,17 +892,14 @@ class _HeroSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 22),
-        _TrackingForm(primary: primary, accent: accent),
+        const _TrackingForm(),
       ],
     );
   }
 }
 
 class _TrackingForm extends StatefulWidget {
-  const _TrackingForm({required this.primary, required this.accent});
-
-  final Color primary;
-  final Color accent;
+  const _TrackingForm();
 
   @override
   State<_TrackingForm> createState() => _TrackingFormState();
@@ -968,6 +916,7 @@ class _TrackingFormState extends State<_TrackingForm> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     return Row(
       children: [
         Expanded(
@@ -986,8 +935,7 @@ class _TrackingFormState extends State<_TrackingForm> {
             child: TextField(
               controller: _controller,
               cursorColor:
-                  Theme.of(context).textSelectionTheme.cursorColor ??
-                  widget.primary,
+                  Theme.of(context).textSelectionTheme.cursorColor ?? primary,
               style: TextStyle(
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
@@ -997,9 +945,9 @@ class _TrackingFormState extends State<_TrackingForm> {
                   vertical: 16,
                 ),
                 border: InputBorder.none,
-                hintText: 'Enter Tracking ID (e.g., CG-2024-001234)',
+                hintText: 'Enter Tracking ID (e.g., FX-2024-001234)',
                 hintStyle: TextStyle(color: Theme.of(context).hintColor),
-                prefixIcon: Icon(Icons.search, color: widget.primary),
+                prefixIcon: Icon(Icons.search, color: primary),
               ),
             ),
           ),
@@ -1009,7 +957,7 @@ class _TrackingFormState extends State<_TrackingForm> {
           height: 56,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: widget.primary,
+              backgroundColor: primary,
               padding: const EdgeInsets.symmetric(horizontal: 26),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -1074,9 +1022,7 @@ class _TrackingFormState extends State<_TrackingForm> {
 }
 
 class _DemoIds extends StatelessWidget {
-  const _DemoIds({required this.accent});
-
-  final Color accent;
+  const _DemoIds();
 
   @override
   Widget build(BuildContext context) {
@@ -1096,9 +1042,9 @@ class _DemoIds extends StatelessWidget {
           runSpacing: 10,
           alignment: WrapAlignment.center,
           children: const [
-            _Chip(text: 'CG-2024-342891'),
-            _Chip(text: 'CG-2024-567123'),
-            _Chip(text: 'CG-2024-789456'),
+            _Chip(text: 'FX-2024-342891'),
+            _Chip(text: 'FX-2024-567123'),
+            _Chip(text: 'FX-2024-789456'),
           ],
         ),
       ],
@@ -1382,7 +1328,7 @@ class _ComplaintDetailsSheet extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  data['complaintId'] ?? 'CG-XXXXXX',
+                                  data['complaintId'] ?? 'FX-XXXXXX',
                                   style: TextStyle(
                                     fontSize: 9,
                                     color: Colors.grey.shade600,
@@ -1679,12 +1625,11 @@ class _StatusChip extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.primary});
-
-  final Color primary;
+  const _TopBar();
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -1692,7 +1637,7 @@ class _TopBar extends StatelessWidget {
           radius: 26,
           backgroundColor: primary,
           child: const Text(
-            'CG',
+            'FX',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w800,
@@ -1711,13 +1656,12 @@ class _TopBar extends StatelessWidget {
 }
 
 class _Footer extends StatelessWidget {
-  const _Footer({required this.primary, required this.accent});
-
-  final Color primary;
-  final Color accent;
+  const _Footer();
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final accent = Theme.of(context).colorScheme.secondary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1741,7 +1685,7 @@ class _Footer extends StatelessWidget {
                 radius: 26,
                 backgroundColor: primary,
                 child: const Text(
-                  'CG',
+                  'FX',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w800,
