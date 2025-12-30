@@ -1189,3 +1189,36 @@ Firebase Cloud Firestore
 ### Goal
 
 Build a modern, responsive app UI that stays in sync with Firestore in real time.
+
+
+# Uploading Media Using Firebase Storage
+
+## Overview
+
+This feature demonstrates how to upload and manage media files in a Flutter app using Firebase Storage. It allows users to select files from their device, upload them securely, and retrieve download URLs.
+
+## Implementation
+
+```dart
+final ref = FirebaseStorage.instance.ref('uploads/file.jpg');
+await ref.putFile(file);
+final url = await ref.getDownloadURL();
+```
+
+## How It Works
+
+1. User selects a file from the device
+2. File is uploaded to Firebase Storage
+3. Download URL is generated and used in the app
+
+## Why Firebase Storage?
+
+* Secure and scalable
+* No backend server required
+* Easy Flutter integration
+
+## Use Cases
+
+* Profile images
+* Chat media
+* Product photos
