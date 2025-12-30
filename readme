@@ -7,6 +7,119 @@ Fixora is a centralized, transparent, and real-time grievance redressal system d
 
 ## Recent Work (Dec 2025)
 
+### Cloud Functions for Serverless Event Handling (Ready to Implement)
+
+Your project **is fully ready** to implement Cloud Functions for serverless event handling! Here's the assessment:
+
+**Current Status:  READY FOR DEPLOYMENT**
+
+#### What You Already Have:
+
+1. **Firebase Functions Directory Configured**
+   - Location: [functions/](functions/) directory exists with proper structure
+   - Configuration: [functions/package.json](functions/package.json) has Firebase Admin SDK and Cloud Functions dependencies
+   - Entry Point: [functions/index.js](functions/index.js) contains two event-based functions
+
+2. **Existing Cloud Functions Implemented:**
+   - **`onProblemCreate`** - Triggers when a new complaint is submitted
+     - Sends notifications to all admin users
+     - Includes invalid token cleanup
+     - Payload: New complaint ID, category, and issue details
+   
+   - **`onProblemUpdate`** - Triggers when complaint status changes
+     - Notifies the complaint reporter of status updates
+     - Compares old vs. new status to avoid duplicate notifications
+     - Removes invalid FCM tokens automatically
+
+3. **Firebase Setup Complete**
+   - `firebase_core` installed in pubspec.yaml
+   - `cloud_firestore` integrated for Firestore triggers
+   - `firebase_messaging` for push notifications
+   - `flutter_local_notifications` for local notification display
+
+#### What Needs to Be Done:
+
+1. **Add Cloud Functions to Flutter (Easy - 2 Steps)**
+   
+   Add dependency to pubspec.yaml:
+   ```yaml
+   dependencies:
+     cloud_functions: ^5.0.0
+   ```
+   
+   Then use in Flutter:
+   ```dart
+   import 'package:cloud_functions/cloud_functions.dart';
+
+   final callable = FirebaseFunctions.instance.httpsCallable('yourFunctionName');
+   final result = await callable.call({'param': 'value'});
+   ```
+
+2. **Deploy Existing Functions**
+   
+   Prerequisites:
+   ```bash
+   npm install -g firebase-tools
+   firebase login
+   cd functions && npm install
+   ```
+   
+   Deploy:
+   ```bash
+   firebase deploy --only functions
+   ```
+
+3. **Create Additional Callable Functions** (Optional)
+   
+   Example - Welcome message on user creation:
+   ```javascript
+   exports.sendWelcome = functions.https.onCall((data, context) => {
+     const email = data.email || 'User';
+     return { message: `Welcome to Fixora, ${email}!` };
+   });
+   ```
+
+#### Recommended Implementation Plan:
+
+**Phase 1: Deploy Current Functions** (5 minutes)
+- [ ] Install firebase-tools globally
+- [ ] Navigate to functions directory
+- [ ] Run `npm install` 
+- [ ] Run `firebase deploy --only functions`
+- [ ] Verify in Firebase Console → Functions → Logs
+
+**Phase 2: Add Callable Function** (10 minutes)
+- [ ] Create callable function for complaint validation
+- [ ] Add `cloud_functions` to pubspec.yaml
+- [ ] Call function from submit complaint page
+- [ ] Display result to user
+
+**Phase 3: Monitor and Test** (5 minutes)
+- [ ] Check Firebase Console logs
+- [ ] Send test complaint
+- [ ] Verify admin notification triggered
+- [ ] Test status update notification
+
+#### Use Cases Ready to Implement:
+
+**Auto-send admin notifications** on new complaints
+**Status update notifications** to complaint reporters  
+**Invalid token cleanup** from FCM database
+**Data validation** before Firestore write
+**Welcome emails/messages** for new users
+**Automated complaint categorization** using AI
+**Generate summary reports** on demand
+
+#### Next Steps:
+
+1. Deploy current functions to test the setup
+2. Add `cloud_functions` package to Flutter
+3. Create a test callable function
+4. Add error handling for function calls
+5. Document function behavior in README
+
+Your project is **production-ready** for Cloud Functions. The infrastructure is already in place!
+
 ### UI Refinements (Dec 29, 2025)
 
 - **Track Complaint Page Visual Updates**: Made design improvements to enhance the user interface of the Track Complaint page.

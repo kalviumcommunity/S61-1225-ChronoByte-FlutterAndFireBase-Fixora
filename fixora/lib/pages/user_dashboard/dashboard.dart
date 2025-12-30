@@ -194,18 +194,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // Map category titles to image assets
+  String _getImageForCategory(String title) {
+    switch (title) {
+      case 'Roads & Transportation':
+        return 'images/Road.jpeg';
+      case 'Waste Management':
+        return 'images/Dustbin.jpeg';
+      case 'Water Supply':
+        return 'images/water.jpeg';
+      case 'Drainage & Sewage':
+        return 'images/Drainage.jpeg';
+      case 'Noise & Air Pollution':
+        return 'images/Pollution.jpeg';
+      case 'Parks & Public Spaces':
+        return 'images/Parks.jpeg';
+      case 'Public Safety':
+        return 'images/logo.png';
+      default:
+        return 'images/logo.png';
+    }
+  }
+
   // FIXED CATEGORY ITEM (NO OVERFLOW)
   Widget _categoryItem(String title) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        final imagePath = _getImageForCategory(title);
+
         return Column(
           children: [
-            // Image Placeholder
+            // Image Container
             Container(
               height: constraints.maxHeight * 0.55,
               width: constraints.maxHeight * 0.55,
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: const [
                   BoxShadow(
@@ -215,16 +238,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ],
               ),
-              child: Center(
-                child: Text(
-                  'No Image',
-                  style: TextStyle(
-                    color: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.color?.withOpacity(0.7),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Theme.of(context).cardColor,
+                      child: Center(
+                        child: Text(
+                          'Image Not Found',
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
