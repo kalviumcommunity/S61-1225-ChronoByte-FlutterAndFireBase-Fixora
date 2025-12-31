@@ -1,8 +1,45 @@
 import 'package:flutter/material.dart';
-import '../../auth/login_page.dart';
+import '../../auth/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class HeaderSection extends StatelessWidget {
+class HeaderSection extends StatefulWidget {
   const HeaderSection({super.key});
+
+  @override
+  State<HeaderSection> createState() => _HeaderSectionState();
+}
+
+class _HeaderSectionState extends State<HeaderSection> {
+  Future<void> _goToDashboard(BuildContext context) async {
+    final user = AuthService.instance.currentUser;
+    if (user == null) {
+      Navigator.pushNamed(context, '/login');
+      return;
+    }
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      final role = doc.data()?['role'] as String?;
+      final email = user.email ?? '';
+      final isAdmin =
+          role == 'admin' || email.toLowerCase().endsWith('@fixoradmin.com');
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(
+          context, isAdmin ? '/admin' : '/home');
+    } catch (_) {
+      final email = user.email ?? '';
+      final isAdmin = email.toLowerCase().endsWith('@fixoradmin.com');
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(
+          context, isAdmin ? '/admin' : '/home');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +58,74 @@ class HeaderSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Text(
                   "Logo",
                   style: TextStyle(
-                    color: Colors.blue.shade700,
+                    color: Color(0xFF1976D2),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const Icon(Icons.menu, color: Colors.white, size: 28),
+
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.menu, color: Colors.white, size: 28),
+                onSelected: (value) {
+                  switch (value) {
+                    case 'login':
+                      Navigator.pushNamed(context, '/login');
+                      break;
+                    case 'signup':
+                      Navigator.pushNamed(context, '/signup');
+                      break;
+                    case 'track':
+                      Navigator.pushNamed(context, '/track');
+                      break;
+                    case 'submit':
+                      Navigator.pushNamed(context, '/login');
+                      break;
+                    case 'dashboard':
+                      _goToDashboard(context);
+                      break;
+                  }
+                },
+                itemBuilder: (context) => const [
+                  PopupMenuItem(
+                    value: 'login',
+                    child: ListTile(
+                        leading: Icon(Icons.login), title: Text('Login')),
+                  ),
+                  PopupMenuItem(
+                    value: 'signup',
+                    child: ListTile(
+                        leading: Icon(Icons.person_add),
+                        title: Text('Sign Up')),
+                  ),
+                  PopupMenuItem(
+                    value: 'track',
+                    child: ListTile(
+                        leading: Icon(Icons.track_changes),
+                        title: Text('Track Status')),
+                  ),
+                  PopupMenuItem(
+                    value: 'submit',
+                    child: ListTile(
+                        leading: Icon(Icons.send),
+                        title: Text('Submit Complaint')),
+                  ),
+                  PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: 'dashboard',
+                    child: ListTile(
+                        leading: Icon(Icons.dashboard),
+                        title: Text('Dashboard')),
+                  ),
+                ],
+              ),
             ],
           ),
+
           const SizedBox(height: 25),
 
           const Text(
@@ -46,6 +138,7 @@ class HeaderSection extends StatelessWidget {
           ),
 
           const SizedBox(height: 12),
+
           const Text(
             "Report civic issues directly to your local authorities. Track updates in real time.",
             style: TextStyle(color: Colors.white70, fontSize: 15),
@@ -53,7 +146,6 @@ class HeaderSection extends StatelessWidget {
 
           const SizedBox(height: 25),
 
-          // Submit button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -65,10 +157,7 @@ class HeaderSection extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
+                Navigator.pushNamed(context, '/login');
               },
               child: const Text(
                 "Submit Complaint",
@@ -79,7 +168,6 @@ class HeaderSection extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // Track Status Button
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(

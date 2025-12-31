@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../auth/login_page.dart';
 
 class ReportNowSection extends StatelessWidget {
   const ReportNowSection({super.key});
@@ -46,10 +45,7 @@ class ReportNowSection extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
+                Navigator.pushNamed(context, '/login');
               },
               child: const Text(
                 "Submit Complaint",
