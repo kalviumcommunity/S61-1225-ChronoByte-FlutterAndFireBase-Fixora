@@ -54,11 +54,11 @@ class MyApp extends StatelessWidget {
           themeMode: themeProvider.themeMode,
           initialRoute: '/',
           routes: {
-            // '/': (context) => const HomePage(),
-            // '/': (context) => const AuthGate(),
+            // Use AuthGate at the root so auth state determines initial screen
+            '/': (context) => const AuthGate(),
             '/signup': (context) => const SignupPage(),
             '/login': (context) => const LoginPage(),
-            '/': (context) => const BottomNavbarPage(),
+            '/home': (context) => const BottomNavbarPage(),
             '/report': (context) => const RaiseIssuePage(),
             '/track': (context) => const TrackComplaintPage(),
             '/profile': (context) => const ProfilePage(),
