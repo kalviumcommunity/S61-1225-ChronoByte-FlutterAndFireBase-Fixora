@@ -1222,3 +1222,244 @@ final url = await ref.getDownloadURL();
 * Profile images
 * Chat media
 * Product photos
+
+---
+
+## App Features & Screenshots (Dec 31, 2025)
+
+### 1. Submit Page (Raise Issue)
+Users can submit complaints with the following details:
+- Category selection (Water, Electricity, Road, Waste Management, etc.)
+- Issue title and detailed description
+- Location information
+- Image attachment support
+- Terms & Conditions acceptance checkbox
+
+**Screenshot:** [Submit_page.jpeg](screenshot/Submit_page.jpeg)
+
+### 2. Track Complaint View
+Users can track their submitted complaints by:
+- Searching with complaint ID
+- Filtering by status and category
+- Viewing real-time status updates
+- Checking complaint details and timeline
+
+**Screenshot:** [Track_view.jpeg](screenshot/Track_view.jpeg)
+
+### 3. User Dashboard
+Personalized user interface showing:
+- Welcome message with user information
+- Quick access to complaint submission
+- View submitted complaints history
+- Profile management options
+- Complaint statistics
+
+**Screenshot:** [User_dashboard.jpeg](screenshot/User_dashboard.jpeg)
+
+### 4. Profile Page
+User profile management features:
+- User information display
+- Submitted complaints history
+- Notification preferences
+- Account settings
+- Logout functionality
+
+**Screenshot:** [Profile_page.jpeg](screenshot/Profile_page.jpeg)
+
+---
+
+## Testing the App on Emulator and Physical Devices
+
+Before deploying or showcasing a Flutter application, it is crucial to test it across multiple devices to ensure consistent behavior. Emulators provide quick testing for different screen sizes and Android versions, while physical devices reveal real-world performance, hardware limitations, and permission flows that emulators may not fully replicate.
+
+This section walks through configuring emulators, enabling developer mode on physical devices, connecting both to Flutter, resolving common device issues, and performing end-to-end testing on at least two different environments.
+
+### 1. Why Testing on Multiple Devices Matters
+
+- **UI Responsiveness**: Ensures UI adapts correctly across screen sizes and resolutions
+- **Hardware Validation**: Reveals hardware-related issues (GPS, camera, sensors)
+- **Permission Testing**: Validates permissions, notifications, and real-device behavior
+- **OS-Specific Bugs**: Helps identify Android/iOS compatibility issues
+- **App Reliability**: Improves overall app reliability before release to users
+
+### 2. Setting Up an Emulator
+
+#### Android Emulator (Android Studio)
+
+1. Open Android Studio → Device Manager
+2. Click **Create Virtual Device**
+3. Choose a device profile (Pixel 6, Pixel 4, etc.)
+4. Select a system image (Android 12/13 recommended)
+5. Click **Finish** and launch the emulator
+6. Once booted, run the Flutter app:
+
+```bash
+flutter run
+```
+
+**Verification:** Check that the emulator appears when you run:
+```bash
+flutter devices
+```
+
+#### iOS Simulator (macOS only)
+
+1. Open Xcode → Open Developer Tools → Simulator
+2. Choose a device: iPhone 14, iPhone 12, etc.
+3. Run with:
+
+```bash
+flutter run -d ios
+```
+
+### 3. Setting Up a Physical Device
+
+#### Android Device Setup
+
+1. Go to **Settings** → **About Phone** → Tap **Build Number** 7 times
+2. Enable **Developer Options** (appears in Settings menu)
+3. Turn on **USB Debugging** in Developer Options
+4. Connect device via USB cable
+5. Approve the fingerprint prompt on the device
+6. Verify device detection:
+
+```bash
+flutter devices
+```
+
+7. Run the app:
+
+```bash
+flutter run -d <device-id>
+```
+
+#### iOS Device Setup (macOS + Xcode)
+
+1. Connect iPhone via USB cable
+2. Trust the computer on device
+3. Open project in Xcode
+4. Add your Apple ID for signing
+5. Run using:
+
+```bash
+flutter run -d <device-id>
+```
+
+### 4. Testing Device-Specific Behaviors
+
+#### What to Test on Emulator
+
+- Multiple screen sizes (phone, tablet)
+- Device orientation changes (portrait/landscape)
+- App lifecycle: minimize and reopen
+- Complete navigation flow
+- Form input validation
+- Dark/Light theme switching
+
+#### What to Test on Physical Devices
+
+- **Permissions**: Camera, location, notifications
+- **Network Connectivity**: WiFi and mobile data
+- **Performance & Animations**: Smooth scrolling, transitions
+- **Touch Responsiveness**: Button taps, gestures
+- **Firebase Integrations**: Authentication, Firestore, FCM
+- **Real-world Conditions**: Battery usage, heat, memory
+
+### 5. Debugging Common Device Issues
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| Device not detected | Missing drivers/USB config | Reconnect, install drivers, restart ADB |
+| Slow emulator | Low RAM/CPU allocation | Increase hardware profile or use physical device |
+| iOS build fails | Missing app signing | Add Apple ID in Xcode |
+| Firebase not working | SHA keys missing | Add SHA-1/SHA-256 fingerprints to Firebase Console |
+| Permissions denied | User rejected prompt | Revoke & retry permissions in Settings |
+| App crashes on startup | Missing dependencies | Run `flutter pub get` and `flutter clean` |
+
+### 6. Running on Multiple Devices Simultaneously
+
+To test on emulator and physical device at the same time:
+
+```bash
+# Terminal 1: Run on emulator
+flutter run -d emulator-5554
+
+# Terminal 2: Run on physical device
+flutter run -d <physical-device-id>
+```
+
+### 7. Capturing Screenshots & Logs
+
+#### Take Screenshots
+
+**Android Emulator:**
+- Press `Ctrl + S` (Windows/Linux) or `Cmd + S` (macOS)
+
+**Physical Device:**
+- Use the device's hardware shortcut (usually Power + Volume Down)
+
+#### View Logs
+
+```bash
+flutter logs
+```
+
+This displays real-time logs from the running app, helping identify issues and track execution flow.
+
+### 8. Best Practices for Testing
+
+ Test on at least one old + one new Android version
+
+ Test using both light and dark themes
+
+ Check behavior in offline/poor connectivity modes
+
+ Rotate device to test responsiveness and UI adjustments
+
+ Perform extended usage tests to detect memory leaks
+
+ Verify all Firebase features (Auth, Firestore, Storage, FCM)
+
+ Test on different device sizes: phone, tablet
+
+ Test form validation with edge cases (empty fields, special characters)
+
+ Verify notification delivery and display
+
+ Test navigation stack and back button behavior
+
+### 9. End-to-End Testing Checklist for Fixora
+
+- [ ] **User Registration**: Create new account and verify email validation
+- [ ] **Login**: Sign in with valid credentials on both emulator and physical device
+- [ ] **Submit Complaint**: Create complaint with all fields, verify ID generation
+- [ ] **Track Complaint**: Search and filter complaints by ID, status, and category
+- [ ] **Real-time Updates**: Change complaint status and verify instant UI update
+- [ ] **Notifications**: Enable notifications and verify FCM delivery
+- [ ] **Profile Page**: View submitted complaints and user information
+- [ ] **Dark Mode**: Switch themes and verify all UI elements adapt correctly
+- [ ] **Offline Mode**: Test app behavior when internet is unavailable
+- [ ] **Performance**: Monitor memory usage and frame rates using DevTools
+- [ ] **Error Handling**: Trigger various errors and verify error messages display correctly
+
+### 10. Continuous Testing Workflow
+
+1. **Start with Emulator**: Quick iteration and debugging
+2. **Test on Physical Device**: Verify real-world performance
+3. **Check Firebase Console**: Review logs and function executions
+4. **Run DevTools**: Inspect widgets and performance metrics
+5. **Document Issues**: Log any bugs found with steps to reproduce
+6. **Fix & Iterate**: Apply fixes and re-test until all tests pass
+
+### Testing Evidence (Dec 31, 2025)
+
+Testing has been performed across multiple emulators and physical devices with the following confirmations:
+
+- **Submit Page**: Form validation and complaint creation working correctly
+- **Track View**: Real-time complaint tracking and status filtering operational
+- **User Dashboard**: User information display and navigation functioning properly
+- **Profile Page**: Profile management and complaint history accessible
+- **Cross-device Testing**: App tested on Android emulator (Pixel 6) and physical devices
+- **Theme Testing**: Dark and light modes switching seamlessly across all pages
+- **Firebase Integration**: Authentication, Firestore CRUD, and notifications verified
+- **Error Handling**: Error messages displaying appropriately across all scenarios
