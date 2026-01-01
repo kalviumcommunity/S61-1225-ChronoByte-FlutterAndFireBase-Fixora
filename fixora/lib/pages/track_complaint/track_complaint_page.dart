@@ -378,15 +378,31 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
     final buttonSize = box?.size ?? const Size(120, 40);
     final buttonPos = box?.localToGlobal(Offset.zero) ?? Offset.zero;
     final screenWidth = MediaQuery.of(context).size.width;
-    const double desiredWidth = 380.0;
+    const double desiredWidth = 420.0;
     const double padding = 16.0;
     final double menuWidth = desiredWidth > (screenWidth - padding * 2)
         ? (screenWidth - padding * 2)
         : desiredWidth;
+
+    // Calculate the best horizontal position
     double offsetX = 0;
-    if (buttonPos.dx + menuWidth + padding > screenWidth) {
-      offsetX = -(menuWidth - buttonSize.width);
+    final buttonCenter = buttonPos.dx + (buttonSize.width / 2);
+    final menuLeftEdge = buttonCenter - (menuWidth / 2);
+    final menuRightEdge = menuLeftEdge + menuWidth;
+
+    // Adjust if menu goes off screen to the left
+    if (menuLeftEdge < padding) {
+      offsetX = padding - buttonPos.dx;
     }
+    // Adjust if menu goes off screen to the right
+    else if (menuRightEdge > screenWidth - padding) {
+      offsetX = (screenWidth - padding) - menuWidth - buttonPos.dx;
+    }
+    // Center align otherwise
+    else {
+      offsetX = -(menuWidth / 2 - buttonSize.width / 2);
+    }
+
     const double offsetY = 44.0;
     _entry = OverlayEntry(
       builder: (context) {
@@ -441,8 +457,9 @@ class _CategoryFilterButtonState extends State<_CategoryFilterButton> {
                           ),
                           const SizedBox(height: 8),
                           Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
+                            spacing: 10,
+                            runSpacing: 10,
+                            alignment: WrapAlignment.start,
                             children: [
                               _FilterChip(
                                 label: 'All',
@@ -991,11 +1008,84 @@ class _TrackingFormState extends State<_TrackingForm> {
                   final status = data['status'] ?? 'Unknown';
                   final category = data['category'] ?? 'Uncategorized';
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Status: $status • $category'),
-                        backgroundColor: Colors.green,
-                      ),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Complaint Details'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Status:',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        Text(
+                                          status,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Category:',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        Text(
+                                          category,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Close'),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   }
                 }
