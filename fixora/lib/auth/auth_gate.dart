@@ -4,13 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'auth_service.dart';
 import '../pages/landing_page/landing.dart';
-import '../pages/user_dashboard/dashboard.dart';
 import '../pages/admin_dashboard/admin_dashboard.dart';
 import '../widgets/skeleton_loaders.dart';
+import '../widgets/bottom_navbar.dart';
 
 /// Simple AuthGate that listens to `authStateChanges` and returns
 /// - [LandingPage] when the user is not signed in
-/// - [UserDashboard] when the user is signed in
+/// - [BottomNavbarPage] when the user is signed in
 /// - [AdminDashboardPage] when the user's email domain matches admin domain
 /// - a loading spinner while waiting for the stream
 class AuthGate extends StatelessWidget {
@@ -67,7 +67,7 @@ class AuthGate extends StatelessWidget {
                 '@fixoradmin.com',
               );
               if (isAdminDom) return const AdminDashboardPage();
-              return const DashboardScreen();
+              return const BottomNavbarPage();
             }
 
             final doc =
@@ -89,7 +89,7 @@ class AuthGate extends StatelessWidget {
             } catch (_) {}
 
             if (isAdmin) return const AdminDashboardPage();
-            return const DashboardScreen();
+            return const BottomNavbarPage();
           },
         );
       },
