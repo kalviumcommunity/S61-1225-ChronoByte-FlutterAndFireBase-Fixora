@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:fixora/pages/admin_dashboard/components/summary_grid.dart';
 import 'package:fixora/pages/admin_dashboard/components/issues_list.dart';
 import '../../widgets/skeleton_loaders.dart';
 import '../../utils/error_handler.dart';
+import '../../theme/theme_provider.dart';
+import '../../auth/auth_service.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({Key? key}) : super(key: key);
@@ -48,6 +51,38 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _onMenuSelected(String value) async {
+    if (value == 'theme') {
+      context.read<ThemeProvider>().toggleTheme();
+    } else if (value == 'profile') {
+      Navigator.pushNamed(context, '/profile');
+    } else if (value == 'logout') {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Logout'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed == true) {
+        await AuthService.instance.signOut();
+        if (!mounted) return;
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+      }
+    }
   }
 
   Future<void> _updateStatus(
@@ -304,50 +339,78 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   }
 
   Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [_primaryColor, _primaryColor.withOpacity(0.7)],
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Image.asset(
+            'assets/images/logo.png',
+            width: 40,
+            height: 40,
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Admin Dashboard",
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: _primaryColor.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                "Manage and resolve citizen complaints",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? const Color(0xFF4F5B6C)
+                      : Colors.grey[400],
+                ),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuButton<String>(
+          onSelected: _onMenuSelected,
+          icon: const Icon(Icons.menu, color: Colors.black, size: 28),
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 'theme',
+              child: Row(
+                children: [
+                  Icon(Icons.brightness_6, color: Colors.black),
+                  const SizedBox(width: 10),
+                  const Text('Toggle Theme'),
                 ],
               ),
-              child: const Icon(
-                Icons.dashboard_rounded,
-                color: Colors.white,
-                size: 28,
+            ),
+            PopupMenuItem(
+              value: 'profile',
+              child: Row(
+                children: [
+                  Icon(Icons.person, color: Colors.black),
+                  const SizedBox(width: 10),
+                  const Text('Profile'),
+                ],
               ),
             ),
-            const SizedBox(width: 14),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            PopupMenuItem(
+              value: 'logout',
+              child: Row(
                 children: [
-                  Text(
-                    "Admin Dashboard",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  SizedBox(height: 2),
-                  Text(
-                    "Manage and resolve citizen complaints",
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
+                  Icon(Icons.logout, color: Colors.black),
+                  const SizedBox(width: 10),
+                  const Text('Logout'),
                 ],
               ),
             ),
