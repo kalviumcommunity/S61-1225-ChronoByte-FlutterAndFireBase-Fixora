@@ -29,16 +29,25 @@ class _HeaderSectionState extends State<HeaderSection> {
           role == 'admin' || email.toLowerCase().endsWith('@fixoradmin.com');
 
       if (!mounted) return;
-      Navigator.pushReplacementNamed(
-          context, isAdmin ? '/admin' : '/home');
+      Navigator.pushReplacementNamed(context, isAdmin ? '/admin' : '/home');
     } catch (_) {
       final email = user.email ?? '';
       final isAdmin = email.toLowerCase().endsWith('@fixoradmin.com');
 
       if (!mounted) return;
-      Navigator.pushReplacementNamed(
-          context, isAdmin ? '/admin' : '/home');
+      Navigator.pushReplacementNamed(context, isAdmin ? '/admin' : '/home');
     }
+  }
+
+  Future<void> _goToTrackStatus(BuildContext context) async {
+    final user = AuthService.instance.currentUser;
+    if (user == null) {
+      Navigator.pushNamed(context, '/login');
+      return;
+    }
+
+    if (!mounted) return;
+    Navigator.pushNamed(context, '/track');
   }
 
   @override
@@ -80,7 +89,7 @@ class _HeaderSectionState extends State<HeaderSection> {
                       Navigator.pushNamed(context, '/signup');
                       break;
                     case 'track':
-                      Navigator.pushNamed(context, '/track');
+                      _goToTrackStatus(context);
                       break;
                     case 'submit':
                       Navigator.pushNamed(context, '/login');
@@ -94,32 +103,38 @@ class _HeaderSectionState extends State<HeaderSection> {
                   PopupMenuItem(
                     value: 'login',
                     child: ListTile(
-                        leading: Icon(Icons.login), title: Text('Login')),
+                      leading: Icon(Icons.login),
+                      title: Text('Login'),
+                    ),
                   ),
                   PopupMenuItem(
                     value: 'signup',
                     child: ListTile(
-                        leading: Icon(Icons.person_add),
-                        title: Text('Sign Up')),
+                      leading: Icon(Icons.person_add),
+                      title: Text('Sign Up'),
+                    ),
                   ),
                   PopupMenuItem(
                     value: 'track',
                     child: ListTile(
-                        leading: Icon(Icons.track_changes),
-                        title: Text('Track Status')),
+                      leading: Icon(Icons.track_changes),
+                      title: Text('Track Status'),
+                    ),
                   ),
                   PopupMenuItem(
                     value: 'submit',
                     child: ListTile(
-                        leading: Icon(Icons.send),
-                        title: Text('Submit Complaint')),
+                      leading: Icon(Icons.send),
+                      title: Text('Submit Complaint'),
+                    ),
                   ),
                   PopupMenuDivider(),
                   PopupMenuItem(
                     value: 'dashboard',
                     child: ListTile(
-                        leading: Icon(Icons.dashboard),
-                        title: Text('Dashboard')),
+                      leading: Icon(Icons.dashboard),
+                      title: Text('Dashboard'),
+                    ),
                   ),
                 ],
               ),
@@ -179,7 +194,7 @@ class _HeaderSectionState extends State<HeaderSection> {
                 ),
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/track');
+                _goToTrackStatus(context);
               },
               child: const Text(
                 "Track Status",

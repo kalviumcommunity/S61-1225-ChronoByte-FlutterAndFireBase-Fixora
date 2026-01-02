@@ -899,7 +899,7 @@ class _HeroSection extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: Theme.of(context).textTheme.headlineMedium?.color,
           ),
         ),
         const SizedBox(height: 10),
