@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/skeleton_loaders.dart';
 import '../../utils/error_handler.dart';
+import '../../theme/theme_provider.dart';
+import '../../auth/auth_service.dart';
 
 class TrackComplaintPage extends StatefulWidget {
   const TrackComplaintPage({super.key});
@@ -73,7 +76,7 @@ class _TrackComplaintPageState extends State<TrackComplaintPage> {
                 'Recent Public Complaints',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF1B2430),
+                  color: Theme.of(context).textTheme.titleLarge?.color,
                 ),
               ),
               const SizedBox(height: 14),
@@ -1716,6 +1719,37 @@ class _StatusChip extends StatelessWidget {
 class _TopBar extends StatelessWidget {
   const _TopBar();
 
+  void _onMenuSelected(BuildContext context, String value) async {
+    if (value == 'profile') {
+      Navigator.pushNamed(context, '/profile');
+    } else if (value == 'logout') {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Logout'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed == true) {
+        await AuthService.instance.signOut();
+        if (context.mounted) {
+          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
@@ -1724,20 +1758,42 @@ class _TopBar extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 26,
-          backgroundColor: primary,
-          child: const Text(
-            'FX',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 18,
+          backgroundColor: Colors.transparent,
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/logo.png',
+              width: 40,
+              height: 40,
+              fit: BoxFit.cover,
             ),
           ),
         ),
-        IconButton(
-          onPressed: () {},
+        PopupMenuButton<String>(
+          onSelected: (value) => _onMenuSelected(context, value),
           icon: const Icon(Icons.menu),
-          color: Theme.of(context).iconTheme.color,
+          color: Theme.of(context).cardColor,
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'profile',
+              child: Row(
+                children: [
+                  Icon(Icons.person),
+                  SizedBox(width: 10),
+                  Text('Profile'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'logout',
+              child: Row(
+                children: [
+                  Icon(Icons.logout),
+                  SizedBox(width: 10),
+                  Text('Logout'),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -1772,12 +1828,13 @@ class _Footer extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 26,
-                backgroundColor: primary,
-                child: const Text(
-                  'FX',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
+                backgroundColor: Colors.transparent,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: 52,
+                    height: 52,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
