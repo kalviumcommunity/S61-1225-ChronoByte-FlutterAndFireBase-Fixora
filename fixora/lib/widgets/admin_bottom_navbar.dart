@@ -34,7 +34,10 @@ class _AdminBottomNavbarPageState extends State<AdminBottomNavbarPage> {
         final isDark = themeProvider.isDarkMode;
 
         return Scaffold(
-          body: _pages[_selectedIndex],
+          body: IndexedStack(
+            index: _selectedIndex,
+            children: _pages,
+          ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
