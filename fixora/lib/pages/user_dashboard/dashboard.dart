@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../auth/auth_service.dart';
 import '../../theme/theme_provider.dart';
 import '../../widgets/skeleton_loaders.dart';
+import 'category_issues_page.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -159,15 +160,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 20),
 
             // Search Placeholder
-            Container(
-              height: 45,
-              decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.secondary.withOpacity(0.06),
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
 
             const SizedBox(height: 30),
 
@@ -198,21 +190,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _getImageForCategory(String title) {
     switch (title) {
       case 'Roads & Transportation':
-        return 'images/Road.jpeg';
+        return 'assets/images/Road.jpeg';
       case 'Waste Management':
-        return 'images/Dustbin.jpeg';
+        return 'assets/images/Dustbin.jpeg';
       case 'Water Supply':
-        return 'images/water.jpeg';
+        return 'assets/images/water.jpeg';
       case 'Drainage & Sewage':
-        return 'images/Drainage.jpeg';
+        return 'assets/images/Drainage.jpeg';
       case 'Noise & Air Pollution':
-        return 'images/Pollution.jpeg';
+        return 'assets/images/Pollution.jpeg';
       case 'Parks & Public Spaces':
-        return 'images/Parks.jpeg';
+        return 'assets/images/Parks.jpeg';
       case 'Public Safety':
-        return 'images/logo.png';
+        return 'assets/images/logo.png';
       default:
-        return 'images/logo.png';
+        return 'assets/images/logo.png';
     }
   }
 
@@ -222,65 +214,75 @@ class _DashboardScreenState extends State<DashboardScreen> {
       builder: (context, constraints) {
         final imagePath = _getImageForCategory(title);
 
-        return Column(
-          children: [
-            // Image Container
-            Container(
-              height: constraints.maxHeight * 0.55,
-              width: constraints.maxHeight * 0.55,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 6,
-                    spreadRadius: 1,
-                  ),
-                ],
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoryIssuesPage(categoryTitle: title),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Theme.of(context).cardColor,
-                      child: Center(
-                        child: Text(
-                          'Image Not Found',
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium?.color?.withOpacity(0.7),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+            );
+          },
+          child: Column(
+            children: [
+              // Image Container
+              Container(
+                height: constraints.maxHeight * 0.55,
+                width: constraints.maxHeight * 0.55,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 6,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Theme.of(context).cardColor,
+                        child: Center(
+                          child: Text(
+                            'Image Not Found',
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            SizedBox(height: constraints.maxHeight * 0.08),
+              SizedBox(height: constraints.maxHeight * 0.08),
 
-            // Title (No Overflow)
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                  fontWeight: FontWeight.w500,
+              // Title (No Overflow)
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
