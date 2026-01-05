@@ -12,16 +12,21 @@ class FooterSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                backgroundColor: Colors.blue.shade100,
-                child: Text("Logo", style: TextStyle(color: Colors.blue.shade700)),
+              Image.asset(
+                'assets/images/logo.png',
+                height: 40,
+                width: 40,
+                fit: BoxFit.contain,
               ),
               const SizedBox(width: 12),
-              Text("CivicGrievance",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade700)),
+              Text(
+                "CivicGrievance",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade700,
+                ),
+              ),
             ],
           ),
 
@@ -32,21 +37,28 @@ class FooterSection extends StatelessWidget {
           ),
 
           const SizedBox(height: 20),
-          const Text("Quick Links",
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            "Quick Links",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 6),
-          Text("• Submit Complaint",
-              style: TextStyle(color: Colors.grey.shade700)),
+          Text(
+            "• Submit Complaint",
+            style: TextStyle(color: Colors.grey.shade700),
+          ),
           Text("• Track Status", style: TextStyle(color: Colors.grey.shade700)),
 
           const SizedBox(height: 20),
-          const Text("Contact",
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text("Contact", style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
-          Text("Helpline: 1800-XXX-XXXX",
-              style: TextStyle(color: Colors.grey.shade700)),
-          Text("Email: support@fixora.gov",
-              style: TextStyle(color: Colors.grey.shade700)),
+          Text(
+            "Helpline: 1800-XXX-XXXX",
+            style: TextStyle(color: Colors.grey.shade700),
+          ),
+          Text(
+            "Email: support@fixora.gov",
+            style: TextStyle(color: Colors.grey.shade700),
+          ),
         ],
       ),
     );

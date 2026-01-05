@@ -77,7 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         elevation: 0,
         title: Text(
           'Dashboard',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
           PopupMenuButton<String>(
@@ -160,7 +160,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 20),
 
             // Search Placeholder
-
             const SizedBox(height: 30),
 
             // Grid Section
@@ -230,7 +229,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: constraints.maxHeight * 0.55,
                 width: constraints.maxHeight * 0.55,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
@@ -240,7 +239,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.cover,

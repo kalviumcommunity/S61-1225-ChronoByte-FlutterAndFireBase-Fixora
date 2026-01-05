@@ -12,14 +12,16 @@ class FeaturesSection extends StatelessWidget {
         children: [
           Chip(
             backgroundColor: Colors.blue.shade50,
-            label: Text("Features",
-                style: TextStyle(color: Colors.blue.shade700)),
+            label: Text(
+              "Features",
+              style: TextStyle(color: Colors.blue.shade700),
+            ),
           ),
 
           const SizedBox(height: 10),
           const Text(
             "A Complete Solution for Civic Issues",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 6),
@@ -29,18 +31,36 @@ class FeaturesSection extends StatelessWidget {
           ),
 
           const SizedBox(height: 20),
-          _featureCard(Icons.description, "Easy Complaint Filing",
-              "Submit complaints with photos, location, and description."),
-          _featureCard(Icons.location_on, "Location-Based Tracking",
-              "Accurate tracking using GPS integration."),
-          _featureCard(Icons.notifications, "Real-Time Notifications",
-              "Get notified instantly at every update."),
-          _featureCard(Icons.dashboard, "Transparent Dashboard",
-              "Track complaint status with complete visibility."),
-          _featureCard(Icons.security, "Secure & Anonymous",
-              "Your identity remains fully protected."),
-          _featureCard(Icons.flash_on, "Quick Resolution",
-              "Issues are routed instantly to the right department."),
+          _featureCard(
+            Icons.description,
+            "Easy Complaint Filing",
+            "Submit complaints with photos, location, and description.",
+          ),
+          _featureCard(
+            Icons.location_on,
+            "Location-Based Tracking",
+            "Accurate tracking using GPS integration.",
+          ),
+          _featureCard(
+            Icons.notifications,
+            "Real-Time Notifications",
+            "Get notified instantly at every update.",
+          ),
+          _featureCard(
+            Icons.dashboard,
+            "Transparent Dashboard",
+            "Track complaint status with complete visibility.",
+          ),
+          _featureCard(
+            Icons.security,
+            "Secure & Anonymous",
+            "Your identity remains fully protected.",
+          ),
+          _featureCard(
+            Icons.flash_on,
+            "Quick Resolution",
+            "Issues are routed instantly to the right department.",
+          ),
         ],
       ),
     );
@@ -52,7 +72,7 @@ class FeaturesSection extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
@@ -62,13 +82,18 @@ class FeaturesSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(desc,
-                    style:
-                        TextStyle(color: Colors.grey.shade700, fontSize: 14)),
+                Text(
+                  desc,
+                  style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+                ),
               ],
             ),
           ),

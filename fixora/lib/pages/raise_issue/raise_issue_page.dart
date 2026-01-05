@@ -28,7 +28,6 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   final List<XFile> _images = []; // stores picked images (optional)
   static const int _maxImages = 4; // limit to avoid excessive uploads
 
-
   // Dynamic colors based on theme
   Color get _primaryBlue => Theme.of(context).colorScheme.primary;
   Color get _darkBlue => Theme.of(context).colorScheme.secondary;
@@ -37,8 +36,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       : const Color(0xFFDEEAFF);
   Color get _backgroundColor => Theme.of(context).scaffoldBackgroundColor;
   Color get _surfaceColor => Theme.of(context).cardColor;
-  Color get _textColor => Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
-  Color get _secondaryTextColor => Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
+  Color get _textColor =>
+      Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+  Color get _secondaryTextColor =>
+      Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
 
   static const _issuesMap = {
     'Road & Transportation': [
@@ -92,9 +93,9 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
           final xfile = _images[i];
           final file = File(xfile.path);
           final ext = xfile.path.split('.').last;
-          final storageRef = FirebaseStorage.instance
-              .ref()
-              .child('problems/$complaintId/images/image_$i.$ext');
+          final storageRef = FirebaseStorage.instance.ref().child(
+            'problems/$complaintId/images/image_$i.$ext',
+          );
           final uploadTask = await storageRef.putFile(file);
           final downloadUrl = await uploadTask.ref.getDownloadURL();
           imageUrls.add(downloadUrl);
@@ -190,7 +191,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
             style: TextStyle(
               color: _textColor,
               fontWeight: FontWeight.w600,
-              fontSize: 18,
+              fontSize: 20,
             ),
           ),
         ],
@@ -334,29 +335,23 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     );
   }
 
-  Widget _brandLogo({double size = 36, bool circular = true}) {
-    final double padding = size > 36 ? 10 : 8;
+  Widget _brandLogo({double size = 36, bool circular = false}) {
+    final double padding = 6;
     return Container(
-      height: size + padding,
-      width: size + padding,
-      padding: EdgeInsets.all(padding / 2),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: Colors.white,
-        shape: circular ? BoxShape.circle : BoxShape.rectangle,
-        borderRadius: circular ? null : BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: Colors.black.withOpacity(0.04)),
       ),
       child: ClipRRect(
-        borderRadius: circular
-            ? BorderRadius.circular(999)
-            : BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8),
         child: Image.asset(
           'assets/images/logo.png',
           height: size,
@@ -453,7 +448,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
 
   Future<void> _pickFromCamera() async {
     try {
-      final picked = await _picker.pickImage(source: ImageSource.camera, imageQuality: 75);
+      final picked = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 75,
+      );
       if (picked != null) {
         setState(() {
           if (_images.length < _maxImages) _images.add(picked);
@@ -472,7 +470,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Images (optional)', style: TextStyle(color: _textColor, fontWeight: FontWeight.w600)),
+        Text(
+          'Images (optional)',
+          style: TextStyle(color: _textColor, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(12),
@@ -511,7 +512,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                                 shape: BoxShape.circle,
                               ),
                               padding: const EdgeInsets.all(4),
-                              child: const Icon(Icons.close, size: 16, color: Colors.white),
+                              child: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -532,9 +537,18 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.add_a_photo_outlined, color: _primaryBlue),
+                              Icon(
+                                Icons.add_a_photo_outlined,
+                                color: _primaryBlue,
+                              ),
                               const SizedBox(height: 4),
-                              Text('Add', style: TextStyle(color: _primaryBlue, fontSize: 12)),
+                              Text(
+                                'Add',
+                                style: TextStyle(
+                                  color: _primaryBlue,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -545,7 +559,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
               if (_images.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Text('${_images.length} / $_maxImages selected', style: TextStyle(color: _secondaryTextColor)),
+                  child: Text(
+                    '${_images.length} / $_maxImages selected',
+                    style: TextStyle(color: _secondaryTextColor),
+                  ),
                 ),
             ],
           ),
@@ -587,18 +604,13 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       decoration: _inputDecoration(label: '$label *', icon: icon),
       value: value,
       hint: Text(hint, style: TextStyle(color: _secondaryTextColor)),
-      style: TextStyle(
-        color: _textColor,
-      ), // dark text for visibility
+      style: TextStyle(color: _textColor), // dark text for visibility
       dropdownColor: _surfaceColor,
       items: items
           .map(
             (item) => DropdownMenuItem(
               value: item,
-              child: Text(
-                item,
-                style: TextStyle(color: _textColor),
-              ),
+              child: Text(item, style: TextStyle(color: _textColor)),
             ),
           )
           .toList(),
