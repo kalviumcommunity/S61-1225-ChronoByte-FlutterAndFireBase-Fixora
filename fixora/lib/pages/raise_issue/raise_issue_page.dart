@@ -31,7 +31,6 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   final List<XFile> _images = []; // stores picked images (optional)
   static const int _maxImages = 4; // limit to avoid excessive uploads
 
-
   // Dynamic colors based on theme
   Color get _primaryBlue => Theme.of(context).colorScheme.primary;
   Color get _darkBlue => Theme.of(context).colorScheme.secondary;
@@ -40,8 +39,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       : const Color(0xFFDEEAFF);
   Color get _backgroundColor => Theme.of(context).scaffoldBackgroundColor;
   Color get _surfaceColor => Theme.of(context).cardColor;
-  Color get _textColor => Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
-  Color get _secondaryTextColor => Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
+  Color get _textColor =>
+      Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+  Color get _secondaryTextColor =>
+      Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
 
   static const _issuesMap = {
     'Road & Transportation': [
@@ -95,9 +96,9 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
           final xfile = _images[i];
           final file = File(xfile.path);
           final ext = xfile.path.split('.').last;
-          final storageRef = FirebaseStorage.instance
-              .ref()
-              .child('problems/$complaintId/images/image_$i.$ext');
+          final storageRef = FirebaseStorage.instance.ref().child(
+            'problems/$complaintId/images/image_$i.$ext',
+          );
           final uploadTask = await storageRef.putFile(file);
           final downloadUrl = await uploadTask.ref.getDownloadURL();
           imageUrls.add(downloadUrl);
@@ -112,7 +113,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
         'description': _descriptionController.text.trim(),
         'location': _locationController.text.trim(),
         if (_selectedLatLng != null)
-          'geo': GeoPoint(_selectedLatLng!.latitude, _selectedLatLng!.longitude),
+          'geo': GeoPoint(
+            _selectedLatLng!.latitude,
+            _selectedLatLng!.longitude,
+          ),
         'images': imageUrls, // optional list of image URLs
         'status': 'Pending',
         'createdAt': FieldValue.serverTimestamp(),
@@ -185,18 +189,33 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       elevation: 0,
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: _textColor),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          } else {
+            Navigator.pushReplacementNamed(context, '/home');
+          }
+        },
       ),
       title: Row(
         children: [
-          _brandLogo(size: 28),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/home',
+                (route) => false,
+              );
+            },
+            child: _brandLogo(size: 28),
+          ),
           const SizedBox(width: 12),
           Text(
             'Fixora - Raise Issue',
             style: TextStyle(
               color: _textColor,
               fontWeight: FontWeight.w600,
-              fontSize: 18,
+              fontSize: 20,
             ),
           ),
         ],
@@ -477,7 +496,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
 
   Future<void> _pickFromCamera() async {
     try {
-      final picked = await _picker.pickImage(source: ImageSource.camera, imageQuality: 75);
+      final picked = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 75,
+      );
       if (picked != null) {
         setState(() {
           if (_images.length < _maxImages) _images.add(picked);
@@ -496,7 +518,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Images (optional)', style: TextStyle(color: _textColor, fontWeight: FontWeight.w600)),
+        Text(
+          'Images (optional)',
+          style: TextStyle(color: _textColor, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(12),
@@ -535,7 +560,11 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                                 shape: BoxShape.circle,
                               ),
                               padding: const EdgeInsets.all(4),
-                              child: const Icon(Icons.close, size: 16, color: Colors.white),
+                              child: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -556,9 +585,18 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.add_a_photo_outlined, color: _primaryBlue),
+                              Icon(
+                                Icons.add_a_photo_outlined,
+                                color: _primaryBlue,
+                              ),
                               const SizedBox(height: 4),
-                              Text('Add', style: TextStyle(color: _primaryBlue, fontSize: 12)),
+                              Text(
+                                'Add',
+                                style: TextStyle(
+                                  color: _primaryBlue,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -569,7 +607,10 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
               if (_images.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Text('${_images.length} / $_maxImages selected', style: TextStyle(color: _secondaryTextColor)),
+                  child: Text(
+                    '${_images.length} / $_maxImages selected',
+                    style: TextStyle(color: _secondaryTextColor),
+                  ),
                 ),
             ],
           ),
@@ -611,18 +652,13 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       decoration: _inputDecoration(label: '$label *', icon: icon),
       value: value,
       hint: Text(hint, style: TextStyle(color: _secondaryTextColor)),
-      style: TextStyle(
-        color: _textColor,
-      ), // dark text for visibility
+      style: TextStyle(color: _textColor), // dark text for visibility
       dropdownColor: _surfaceColor,
       items: items
           .map(
             (item) => DropdownMenuItem(
               value: item,
-              child: Text(
-                item,
-                style: TextStyle(color: _textColor),
-              ),
+              child: Text(item, style: TextStyle(color: _textColor)),
             ),
           )
           .toList(),
@@ -844,9 +880,7 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   Future<void> _openMapPicker() async {
     final result = await Navigator.push<LatLng>(
       context,
-      MaterialPageRoute(
-        builder: (_) => const _MapPickerPage(),
-      ),
+      MaterialPageRoute(builder: (_) => const _MapPickerPage()),
     );
     if (result != null) {
       setState(() {
@@ -909,9 +943,7 @@ class _MapPickerPageState extends State<_MapPickerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Location'),
-      ),
+      appBar: AppBar(title: const Text('Select Location')),
       body: Stack(
         children: [
           GoogleMap(
@@ -925,10 +957,7 @@ class _MapPickerPageState extends State<_MapPickerPage> {
             onTap: (latLng) => setState(() => _picked = latLng),
             markers: {
               if (_picked != null)
-                Marker(
-                  markerId: const MarkerId('picked'),
-                  position: _picked!,
-                ),
+                Marker(markerId: const MarkerId('picked'), position: _picked!),
             },
           ),
           Positioned(
