@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../auth/auth_service.dart';
 
 class ReportNowSection extends StatelessWidget {
   const ReportNowSection({super.key});
@@ -12,7 +13,7 @@ class ReportNowSection extends StatelessWidget {
         gradient: const LinearGradient(
           colors: [Color(0xFF0D47A1), Color(0xFF1976D2)],
         ),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,7 +22,7 @@ class ReportNowSection extends StatelessWidget {
             "Have a Civic Issue?\nReport It Now!",
             style: TextStyle(
               color: Colors.white,
-              fontSize: 22,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -66,6 +67,11 @@ class ReportNowSection extends StatelessWidget {
                 ),
               ),
               onPressed: () {
+                final user = AuthService.instance.currentUser;
+                if (user == null) {
+                  Navigator.pushNamed(context, '/login');
+                  return;
+                }
                 Navigator.pushNamed(context, '/track');
               },
               child: const Text(

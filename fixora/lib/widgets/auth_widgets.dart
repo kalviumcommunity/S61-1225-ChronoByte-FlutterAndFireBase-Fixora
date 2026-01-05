@@ -59,7 +59,7 @@ InputDecoration authInputDecoration({
     filled: true,
     fillColor: AuthColors.getFieldColor(context),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(
         color: isDark
             ? Colors.white.withOpacity(0.08)
@@ -67,15 +67,15 @@ InputDecoration authInputDecoration({
       ),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(color: AuthColors.accentStart.withOpacity(0.8)),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: Colors.redAccent),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: Colors.redAccent),
     ),
   );
@@ -99,7 +99,7 @@ class AuthGradientButton extends StatelessWidget {
         gradient: const LinearGradient(
           colors: [AuthColors.accentStart, AuthColors.accentEnd],
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: AuthColors.accentStart.withOpacity(0.25),
@@ -114,7 +114,7 @@ class AuthGradientButton extends StatelessWidget {
           shadowColor: Colors.transparent,
           minimumSize: const Size.fromHeight(54),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16),
         ),

@@ -1756,15 +1756,26 @@ class _TopBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CircleAvatar(
-          radius: 26,
-          backgroundColor: Colors.transparent,
-          child: ClipOval(
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
             child: Image.asset(
               'assets/images/logo.png',
               width: 40,
               height: 40,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
         ),
@@ -1826,15 +1837,26 @@ class _Footer extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 26,
-                backgroundColor: Colors.transparent,
-                child: ClipOval(
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
                     'assets/images/logo.png',
-                    width: 52,
-                    height: 52,
-                    fit: BoxFit.cover,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),

@@ -67,13 +67,26 @@ class _HeaderSectionState extends State<HeaderSection> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Text(
-                  "Logo",
-                  style: TextStyle(
-                    color: Color(0xFF1976D2),
-                    fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
