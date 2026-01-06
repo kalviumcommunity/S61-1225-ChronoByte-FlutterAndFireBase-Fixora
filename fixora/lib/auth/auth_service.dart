@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import '../services/notification_service.dart';
 
 class AuthService {
   AuthService._privateConstructor();
@@ -9,54 +8,41 @@ class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   Stream<User?> authStateChanges() => _auth.authStateChanges();
-
   User? get currentUser => _auth.currentUser;
 
-  /// Returns the username stored in Firestore for the current user, if any
   Future<String?> getUsernameForCurrentUser() async {
     final user = _auth.currentUser;
     if (user == null) return null;
+
     final doc = await _firestore.collection('users').doc(user.uid).get();
     if (!doc.exists) return null;
-    final data = doc.data();
-    if (data == null) return null;
-    return (data['username'] as String?) ?? null;
+
+    return doc.data()?['username'] as String?;
   }
 
-  /// Validates password according to requirements:
-  /// 1. At least 6 characters
-  /// 2. Starts with a capital letter
-  /// 3. Contains at least one symbol
   String? validatePassword(String password) {
-    if (password.isEmpty) {
-      return 'Password is required';
-    }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    if (!password[0].contains(RegExp(r'[A-Z]'))) {
+    if (password.isEmpty) return 'Password is required';
+    if (password.length < 6) return 'Password must be at least 6 characters';
+    if (!RegExp(r'^[A-Z]').hasMatch(password)) {
       return 'Password must start with a capital letter';
     }
-    if (!password.contains(RegExp(r'[!@#$%^&*(),.?\":{}|<>]'))) {
-      return 'Password must contain at least one symbol (!@#\$%^&*(),.?\":{}|<>)';
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) {
+      return 'Password must contain at least one symbol';
     }
     return null;
   }
 
-  /// Checks if username already exists in Firestore
   Future<bool> isUsernameExists(String username) async {
-    try {
-      final querySnapshot = await _firestore
-          .collection('users')
-          .where('username', isEqualTo: username)
-          .limit(1)
-          .get();
-      return querySnapshot.docs.isNotEmpty;
-    } catch (e) {
-      throw Exception('Error checking username: $e');
-    }
+    final query = await _firestore
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .limit(1)
+        .get();
+
+    return query.docs.isNotEmpty;
   }
 
   Future<UserCredential> signUp({
@@ -64,38 +50,65 @@ class AuthService {
     required String password,
     required String username,
   }) async {
-    final userCredential = await _auth.createUserWithEmailAndPassword(
+    final credential = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
 
-    // Determine role based on email domain and store username and role in Firestore
     final isAdmin = email.toLowerCase().endsWith('@fixoradmin.com');
-    await _firestore.collection('users').doc(userCredential.user!.uid).set({
+
+    await _firestore.collection('users').doc(credential.user!.uid).set({
       'username': username,
       'email': email,
       'role': isAdmin ? 'admin' : 'user',
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    return userCredential;
+    await _saveFcmToken();
+
+    return credential;
   }
 
   Future<UserCredential> signIn({
     required String email,
     required String password,
-  }) {
-    return _auth.signInWithEmailAndPassword(email: email, password: password);
+  }) async {
+    final credential = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    await _saveFcmToken();
+
+    return credential;
   }
 
   Future<void> signOut() async {
-    try {
-      final token = await FirebaseMessaging.instance.getToken();
-      if (token != null) await NotificationService.instance.removeTokenFromFirestore(token);
-    } catch (e) {
-      // ignore
+    final user = _auth.currentUser;
+    if (user != null) {
+      try {
+        final token = await _fcm.getToken();
+        if (token != null) {
+          await _firestore.collection('users').doc(user.uid).update({
+            'fcmTokens': FieldValue.arrayRemove([token]),
+          });
+        }
+      } catch (_) {}
     }
 
-    return _auth.signOut();
+    await _auth.signOut();
+  }
+
+  Future<void> _saveFcmToken() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final token = await _fcm.getToken();
+    if (token == null) return;
+
+    await _firestore.collection('users').doc(user.uid).set({
+      'fcmTokens': FieldValue.arrayUnion([token]),
+      'lastTokenUpdate': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 }
