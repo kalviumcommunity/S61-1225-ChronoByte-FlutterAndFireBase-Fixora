@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class RaiseIssuePage extends StatefulWidget {
   const RaiseIssuePage({super.key});
@@ -20,6 +22,8 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
   final _descriptionController = TextEditingController();
   final _locationController = TextEditingController();
   LatLng? _selectedLatLng;
+  static const String _mapsApiKey =
+      String.fromEnvironment('MAPS_API_KEY', defaultValue: '');
 
   String? _category;
   String? _issue;
@@ -883,12 +887,35 @@ class _RaiseIssuePageState extends State<RaiseIssuePage> {
       MaterialPageRoute(builder: (_) => const _MapPickerPage()),
     );
     if (result != null) {
-      setState(() {
-        _selectedLatLng = result;
-        _locationController.text =
-            'Lat: ${result.latitude.toStringAsFixed(6)}, Lng: ${result.longitude.toStringAsFixed(6)}';
-      });
+      setState(() => _selectedLatLng = result);
+      try {
+        final address = await _reverseGeocode(result);
+        setState(() {
+          _locationController.text = address ??
+              'Lat: ${result.latitude.toStringAsFixed(6)}, Lng: ${result.longitude.toStringAsFixed(6)}';
+        });
+      } catch (_) {
+        setState(() {
+          _locationController.text =
+              'Lat: ${result.latitude.toStringAsFixed(6)}, Lng: ${result.longitude.toStringAsFixed(6)}';
+        });
+      }
     }
+  }
+
+  Future<String?> _reverseGeocode(LatLng latLng) async {
+    if (_mapsApiKey.isEmpty) return null;
+    final uri = Uri.parse(
+      'https://maps.googleapis.com/maps/api/geocode/json'
+      '?latlng=${latLng.latitude},${latLng.longitude}&key=$_mapsApiKey',
+    );
+    final resp = await http.get(uri);
+    if (resp.statusCode != 200) return null;
+    final data = json.decode(resp.body) as Map<String, dynamic>;
+    final results = (data['results'] as List?) ?? [];
+    if (results.isEmpty) return null;
+    final formatted = results.first['formatted_address'] as String?;
+    return formatted;
   }
 }
 
