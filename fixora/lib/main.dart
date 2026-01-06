@@ -7,6 +7,7 @@ import 'pages/landing_page/landing.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/notification_service.dart';
 import 'auth/auth_gate.dart';
+import 'pages/splash/splash_screen.dart';
 import 'pages/raise_issue/raise_issue_page.dart';
 import 'pages/user_dashboard/dashboard.dart';
 import 'pages/admin_dashboard/admin_dashboard.dart';
@@ -52,8 +53,9 @@ class MyApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
-          initialRoute: '/',
+          initialRoute: '/splash',
           routes: {
+            '/splash': (context) => const SplashScreen(),
             // Use AuthGate at the root so auth state determines initial screen
             '/': (context) => const AuthGate(),
             '/signup': (context) => const SignupPage(),
